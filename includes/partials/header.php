@@ -1,0 +1,41 @@
+<header class="site-header">
+    <div class="container">
+        <div class="header-row">
+            <a href="<?= SITE_URL; ?>/index.php" class="brand">
+                <span class="brand-mark">FC</span>
+                <span class="brand-text"><?= e(SITE_NAME); ?></span>
+            </a>
+
+            <button class="menu-toggle" type="button" aria-label="মেনু খুলুন" id="menuToggle">
+                ☰
+            </button>
+
+            <nav class="main-nav" id="mainNav">
+                <a href="<?= SITE_URL; ?>/index.php">হোম</a>
+                <a href="<?= SITE_URL; ?>/about.php">আমাদের সম্পর্কে</a>
+                <a href="<?= SITE_URL; ?>/contact.php">যোগাযোগ</a>
+
+                <?php if (!empty($_SESSION['user_id'])): ?>
+                    <a href="<?= SITE_URL; ?>/dashboard.php">ড্যাশবোর্ড</a>
+                    <a href="<?= SITE_URL; ?>/logout.php" class="nav-btn nav-btn-outline">লগআউট</a>
+                <?php else: ?>
+                    <a href="<?= SITE_URL; ?>/login.php" class="nav-btn nav-btn-outline">লগইন</a>
+                    <a href="<?= SITE_URL; ?>/register.php" class="nav-btn nav-btn-primary">রেজিস্টার</a>
+                <?php endif; ?>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.getElementById('menuToggle');
+    const nav = document.getElementById('mainNav');
+
+    if (toggle && nav) {
+        toggle.addEventListener('click', function () {
+            nav.classList.toggle('is-open');
+        });
+    }
+});
+</script>
