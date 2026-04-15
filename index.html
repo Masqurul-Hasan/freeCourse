@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>বাংলা মাইক্রোজব</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0b1020;
+      color: #eaf1ff;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+
+    .topbar {
+      background: rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 14px;
+    }
+    .topbar-inner, .nav-inner {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 12px 0;
+      flex-wrap: wrap;
+    }
+    .top-links, .nav-links, .auth-links {
+      display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+    }
+    .top-links a, .nav-links a { color: #c9d7ff; }
+    .top-links a:hover, .nav-links a:hover { color: white; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(11,16,32,0.7);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 20px;
+    }
+    .brand-logo {
+      width: 42px; height: 42px; border-radius: 14px;
+      background: linear-gradient(135deg, #4f8cff, #53e0c1);
+      display: grid; place-items: center; color: white; font-weight: 800;
+      box-shadow: 0 12px 32px rgba(79,140,255,0.3);
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 12px 18px; border-radius: 14px; font-weight: 700;
+      transition: 0.25s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #4f8cff, #53e0c1);
+      color: white;
+      box-shadow: 0 12px 28px rgba(79,140,255,0.28);
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-outline {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: white;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 92px 0 72px;
+      background:
+        radial-gradient(circle at top left, rgba(83,224,193,0.16), transparent 30%),
+        radial-gradient(circle at top right, rgba(79,140,255,0.18), transparent 28%),
+        linear-gradient(180deg, #101933 0%, #0b1020 100%);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 36px;
+      align-items: center;
+    }
+    .badge {
+      display: inline-flex; gap: 10px; align-items: center;
+      padding: 10px 14px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
+      color: #bbcbff;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 64px);
+      line-height: 1.03;
+      margin-bottom: 16px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .hero p {
+      max-width: 640px;
+      color: #c7d4f7;
+      font-size: 17px;
+      margin-bottom: 28px;
+    }
+    .hero-actions {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+    .hero-points {
+      display: flex; flex-wrap: wrap; gap: 20px;
+      color: #dce6ff; font-size: 15px;
+    }
+    .hero-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 26px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+    }
+    .hero-visual {
+      display: grid; gap: 18px;
+    }
+    .mini-stat, .activity-item, .service-card, .count-card, .panel {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+    }
+    .mini-stat { padding: 18px; }
+    .mini-stat strong { font-size: 28px; display: block; }
+    .mini-grid {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 16px;
+    }
+
+    section { padding: 72px 0; }
+    .section-head {
+      text-align: center; max-width: 760px; margin: 0 auto 40px;
+    }
+    .eyebrow {
+      color: #78f3d4; text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .section-head h2 {
+      font-size: clamp(28px, 4vw, 44px);
+      margin-bottom: 12px;
+      line-height: 1.08;
+    }
+    .section-head p { color: #b9c8ea; }
+
+    .counts {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+    }
+    .count-card {
+      padding: 26px;
+      text-align: center;
+    }
+    .count-card h3 {
+      font-size: clamp(28px, 3.4vw, 42px);
+      margin-bottom: 8px;
+      color: white;
+    }
+    .count-card p { color: #b8c8ef; }
+
+    .activities {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+    }
+    .activity-item {
+      padding: 18px;
+    }
+    .activity-item .time {
+      color: #78f3d4; font-size: 13px; margin-bottom: 10px;
+    }
+    .activity-item h4 { font-size: 17px; margin-bottom: 8px; }
+    .activity-item p { color: #bfd0f4; font-size: 14px; }
+
+    .services {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .service-card {
+      padding: 28px;
+      transition: 0.25s ease;
+    }
+    .service-card:hover { transform: translateY(-6px); border-color: rgba(120,243,212,0.34); }
+    .service-icon {
+      width: 58px; height: 58px; border-radius: 18px; margin-bottom: 18px;
+      display: grid; place-items: center; font-size: 24px;
+      background: linear-gradient(135deg, rgba(79,140,255,0.24), rgba(83,224,193,0.24));
+    }
+    .service-card h3 { margin-bottom: 10px; font-size: 22px; }
+    .service-card p { color: #bed0f2; margin-bottom: 16px; }
+    .service-card ul {
+      padding-left: 18px; color: #dbe7ff;
+      display: grid; gap: 8px;
+    }
+
+    .promo {
+      display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 22px;
+      align-items: stretch;
+    }
+    .panel { padding: 32px; }
+    .panel h3 { font-size: 32px; margin-bottom: 10px; }
+    .panel p { color: #bfd0f4; margin-bottom: 18px; }
+    .app-box {
+      min-height: 100%;
+      display: flex; flex-direction: column; justify-content: center;
+      background: linear-gradient(135deg, rgba(79,140,255,0.16), rgba(83,224,193,0.1));
+    }
+
+    footer {
+      padding: 60px 0 30px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: #090e1c;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 24px;
+    }
+    .footer-col h4 { margin-bottom: 14px; }
+    .footer-col a, .footer-col p { color: #b9c8ea; display: block; margin-bottom: 10px; }
+    .copyright {
+      margin-top: 28px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06);
+      color: #99abd7; text-align: center;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid, .promo, .footer-grid { grid-template-columns: 1fr; }
+      .counts, .services, .activities { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 680px) {
+      .counts, .services, .activities, .mini-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 72px; }
+      .hero-actions, .hero-points { flex-direction: column; align-items: flex-start; }
+      .nav-links { display: none; }
+      .auth-links { width: 100%; justify-content: flex-start; }
+      .section-head { margin-bottom: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="top-links">
+        <a href="#">উত্তোলন হিস্টোরি</a>
+        <a href="#">লাইভ সাপোর্ট</a>
+        <a href="#">রেফারেল প্রোগ্রাম</a>
+      </div>
+      <div class="auth-links">
+        <a href="#">রেজিস্টার</a>
+        <a href="#">লগইন</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a class="brand" href="#">
+        <span class="brand-logo">M</span>
+        <span>বাংলা মাইক্রোজব</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#">হোম</a>
+        <a href="#stats">পরিসংখ্যান</a>
+        <a href="#activity">কার্যক্রম</a>
+        <a href="#services">সেবাসমূহ</a>
+        <a href="#referral">রেফারেল</a>
+        <a href="#footer">যোগাযোগ</a>
+      </nav>
+      <div class="auth-links">
+        <a class="btn btn-outline" href="#">Login</a>
+        <a class="btn btn-primary" href="#">আয় শুরু করুন</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="badge">● মাইক্রোজব, রেফারেল ও অনলাইন আয়ের জন্য বিশ্বস্ত বাংলা প্ল্যাটফর্ম</div>
+        <h1>বাংলায় তৈরি করুন আধুনিক মাইক্রোজব ও ফ্রিল্যান্সিং ওয়েবসাইট</h1>
+        <p>
+          এই ডিজাইনটি reference layout-এর structure অনুসরণ করে তৈরি করা হয়েছে — hero section, live counter, recent activity, service cards, referral banner, download section এবং professional footer সহ।
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#services">ফিচার দেখুন</a>
+          <a class="btn btn-outline" href="#footer">যোগাযোগ করুন</a>
+        </div>
+        <div class="hero-points">
+          <span>✓ ইউজার ড্যাশবোর্ড</span>
+          <span>✓ জব পোস্ট সিস্টেম</span>
+          <span>✓ রেফারেল ইনকাম</span>
+          <span>✓ উত্তোলন মডিউল</span>
+        </div>
+      </div>
+
+      <div class="hero-card hero-visual">
+        <div class="mini-grid">
+          <div class="mini-stat">
+            <span>মোট ইউজার</span>
+            <strong>2M+</strong>
+            <small>দ্রুত বাড়ছে ব্যবহারকারী সংখ্যা</small>
+          </div>
+          <div class="mini-stat">
+            <span>সম্পন্ন কাজ</span>
+            <strong>143M+</strong>
+            <small>রিয়েল-টাইম টাস্ক প্রগ্রেস</small>
+          </div>
+          <div class="mini-stat">
+            <span>জব পোস্ট</span>
+            <strong>284K+</strong>
+            <small>প্রতিদিন নতুন সুযোগ</small>
+          </div>
+          <div class="mini-stat">
+            <span>মোট পেমেন্ট</span>
+            <strong>2.29M+</strong>
+            <small>নিরাপদ উত্তোলন ব্যবস্থা</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stats">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">বিশ্বাসের পরিসংখ্যান</div>
+        <h2>শক্তিশালী পরিসংখ্যান দিয়ে বাড়ান আস্থা</h2>
+        <p>শুরুর দিকেই মোট জব, ব্যবহারকারী, সম্পন্ন কাজ এবং মোট পেমেন্ট দেখালে visitor-এর কাছে দ্রুত বিশ্বাস তৈরি হয়।</p>
+      </div>
+      <div class="counts">
+        <div class="count-card"><h3>284,903</h3><p>মোট জব পোস্ট</p></div>
+        <div class="count-card"><h3>2,032,691</h3><p>মোট ব্যবহারকারী</p></div>
+        <div class="count-card"><h3>143,220,830</h3><p>সম্পন্ন কাজ</p></div>
+        <div class="count-card"><h3>2,294,472</h3><p>মোট পেমেন্ট</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="activity">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">সাম্প্রতিক কার্যক্রম</div>
+        <h2>লাইভ activity section দিয়ে site-কে করুন আরও real</h2>
+        <p>এই section-এ সাম্প্রতিক কাজ, progress এবং সময় দেখানো হবে যাতে visitor-এর কাছে platform active মনে হয়।</p>
+      </div>
+      <div class="activities">
+        <div class="activity-item">
+          <div class="time">8 minutes ago</div>
+          <h4>ভিডিও ভিউ টাস্ক সম্পন্ন হয়েছে</h4>
+          <p>একজন ইউজার ২০০ টাস্কের মধ্যে ১টি সম্পন্ন করেছে।</p>
+        </div>
+        <div class="activity-item">
+          <div class="time">15 minutes ago</div>
+          <h4>সাইন-আপ ক্যাম্পেইন চলছে</h4>
+          <p>আরেকজন worker ক্যাম্পেইনে যুক্ত হয়ে কাজ এগিয়ে নিচ্ছে।</p>
+        </div>
+        <div class="activity-item">
+          <div class="time">1 hour ago</div>
+          <h4>বাল্ক টাস্কে নতুন মাইলস্টোন</h4>
+          <p>চলমান microjob campaign-এ উল্লেখযোগ্য progress সম্পন্ন হয়েছে।</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow">আমাদের সেবাসমূহ</div>
+        <h2>আপনার Bangla website-এর মূল feature section</h2>
+        <p>এই প্ল্যাটফর্মটি মূলত কাজ করা, জব পোস্ট করা, এবং আয় বা ডিপোজিট flow-এর উপর ভিত্তি করে সাজানো।</p>
+      </div>
+      <div class="services">
+        <article class="service-card">
+          <div class="service-icon">💼</div>
+          <h3>কাজ করুন</h3>
+          <p>ইউজাররা micro task দেখতে পারবে, কাজ সম্পন্ন করতে পারবে এবং dashboard থেকে proof জমা দিতে পারবে।</p>
+          <ul>
+            <li>পছন্দের কাজ নির্বাচন</li>
+            <li>কাজের নির্দেশনা দেখা</li>
+            <li>সম্পন্ন প্রমাণ আপলোড</li>
+          </ul>
+        </article>
+        <article class="service-card">
+          <div class="service-icon">📢</div>
+          <h3>জব পোস্ট করুন</h3>
+          <p>ক্লায়েন্টরা সহজেই campaign তৈরি, requirement নির্ধারণ এবং budget manage করতে পারবে।</p>
+          <ul>
+            <li>requirement ও budget সেট করুন</li>
+            <li>worker ও approval track করুন</li>
+            <li>সম্পন্ন কাজের মান যাচাই করুন</li>
+          </ul>
+        </article>
+        <article class="service-card">
+          <div class="service-icon">💳</div>
+          <h3>আয় / ডিপোজিট</h3>
+          <p>একটি panel থেকেই deposit, wallet balance, earning history এবং withdrawal request manage করা যাবে।</p>
+          <ul>
+            <li>পেমেন্ট মেথড নির্বাচন</li>
+            <li>ডিপোজিট বা উত্তোলন করুন</li>
+            <li>পেমেন্ট হিস্টোরি দেখুন</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="referral">
+    <div class="container promo">
+      <div class="panel">
+        <div class="eyebrow">রেফারেল প্রোগ্রাম</div>
+        <h3>রেফার করে বাড়তি আয় করুন</h3>
+        <p>
+          নতুন ইউজার রেফার করে deposit বা completed task-এর উপর কমিশন দেওয়া হলে platform-এর growth অনেক দ্রুত হয়।
+        </p>
+        <a href="#" class="btn btn-primary">এখনই শুরু করুন</a>
+      </div>
+      <div class="panel app-box">
+        <div class="eyebrow">মোবাইল অ্যাপ</div>
+        <h3>অ্যাপ ডাউনলোড করুন এবং কাজ শুরু করুন</h3>
+        <p>এখানে আপনার app link, Play Store button অথবা QR code দেখিয়ে আরও conversion আনা যাবে।</p>
+        <a href="#" class="btn btn-outline">অ্যাপ ডাউনলোড</a>
+      </div>
+    </div>
+  </section>
+
+  <footer id="footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <div class="brand" style="margin-bottom:16px;">
+          <span class="brand-logo">M</span>
+          <span>বাংলা মাইক্রোজব</span>
+        </div>
+        <p>বাংলা ভাষাভিত্তিক আধুনিক microjob ও freelance marketplace-এর জন্য তৈরি responsive layout।</p>
+      </div>
+      <div class="footer-col">
+        <h4>কোম্পানি</h4>
+        <a href="#">আমাদের সম্পর্কে</a>
+        <a href="#">প্রাইভেসি পলিসি</a>
+        <a href="#">শর্তাবলী</a>
+      </div>
+      <div class="footer-col">
+        <h4>সেবাসমূহ</h4>
+        <a href="#">জিজ্ঞাসা</a>
+        <a href="#">রিফান্ড পলিসি</a>
+        <a href="#">ক্যানসেলেশন পলিসি</a>
+      </div>
+      <div class="footer-col">
+        <h4>সাপোর্ট</h4>
+        <a href="#">যোগাযোগ</a>
+        <a href="#">লাইভ চ্যাট</a>
+        <a href="#">হেল্প সেন্টার</a>
+      </div>
+    </div>
+    <div class="container copyright">© ২০২৬ বাংলা মাইক্রোজব। সর্বস্বত্ব সংরক্ষিত।</div>
+  </footer>
+</body>
+</html>
