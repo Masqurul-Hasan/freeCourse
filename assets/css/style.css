@@ -1,3 +1,6 @@
+/* =========================================================
+   1. ROOT VARIABLES / DESIGN TOKENS
+   ========================================================= */
 :root {
     --bg: #f6f8fc;
     --surface: #ffffff;
@@ -5,13 +8,39 @@
     --text: #122033;
     --muted: #5f6f86;
     --line: #e7edf5;
+
     --primary: #2563eb;
     --primary-2: #1d4ed8;
+    --primary-soft: rgba(37, 99, 235, 0.08);
+
+    --success-bg: #f0fdf4;
+    --success-text: #166534;
+    --success-line: #bbf7d0;
+
+    --danger-bg: #fef2f2;
+    --danger-text: #b91c1c;
+    --danger-line: #fecaca;
+
+    --warning-bg: #fff7ed;
+    --warning-text: #c2410c;
+    --warning-line: #fdba74;
+
+    --shadow-sm: 0 4px 14px rgba(15, 23, 42, 0.04);
     --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.08);
+
+    --radius-sm: 12px;
     --radius: 18px;
+    --radius-lg: 24px;
+
     --container: 1200px;
+
+    --transition: 0.25s ease;
 }
 
+/* =========================================================
+   2. RESET / BASE
+   ========================================================= */
 * {
     box-sizing: border-box;
 }
@@ -28,6 +57,11 @@ body {
     line-height: 1.6;
 }
 
+img {
+    max-width: 100%;
+    display: block;
+}
+
 a {
     color: inherit;
     text-decoration: none;
@@ -40,11 +74,68 @@ select {
     font: inherit;
 }
 
+ul,
+ol {
+    padding-left: 18px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    line-height: 1.2;
+}
+
+p {
+    margin-top: 0;
+}
+
+/* =========================================================
+   3. GLOBAL UTILITIES
+   ========================================================= */
 .container {
-    width: min(var(--container), calc(100% - 24px));
+    width: min(var(--container), calc(100% - 32px));
     margin: 0 auto;
 }
 
+.page-shell {
+    padding: 28px 0;
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.section-space {
+    padding: 56px 0;
+}
+
+.section-head {
+    margin-bottom: 22px;
+}
+
+.section-head h1,
+.section-head h2,
+.section-head h3 {
+    margin-bottom: 8px;
+}
+
+.section-head p {
+    color: var(--muted);
+}
+
+.text-muted {
+    color: var(--muted);
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* =========================================================
+   4. HEADER / NAVBAR
+   ========================================================= */
 .site-header {
     position: sticky;
     top: 0;
@@ -97,6 +188,13 @@ select {
     display: inline-grid;
     place-items: center;
     font-size: 20px;
+    color: var(--text);
+    transition: var(--transition);
+}
+
+.menu-toggle:hover {
+    border-color: #d8e3f1;
+    box-shadow: var(--shadow-sm);
 }
 
 .main-nav {
@@ -127,6 +225,7 @@ select {
     padding: 11px 16px;
     border-radius: 14px;
     text-align: center;
+    transition: var(--transition);
 }
 
 .nav-btn-outline {
@@ -134,11 +233,24 @@ select {
     background: #fff;
 }
 
+.nav-btn-outline:hover {
+    border-color: #d8e3f1;
+    box-shadow: var(--shadow-sm);
+}
+
 .nav-btn-primary {
     color: #fff !important;
     background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
 }
 
+.nav-btn-primary:hover {
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   5. FOOTER
+   ========================================================= */
 .site-footer {
     margin-top: 60px;
     background: var(--surface);
@@ -171,6 +283,11 @@ select {
     display: block;
     color: var(--muted);
     margin-bottom: 8px;
+    transition: var(--transition);
+}
+
+.site-footer a:hover {
+    color: var(--primary);
 }
 
 .footer-bottom {
@@ -181,18 +298,445 @@ select {
     font-size: 14px;
 }
 
-.page-shell {
-    padding: 28px 0;
+/* =========================================================
+   6. BUTTONS
+   ========================================================= */
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-success,
+.btn-light {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 18px;
+    border-radius: 14px;
+    border: 0;
+    cursor: pointer;
+    font-weight: 700;
+    transition: var(--transition);
 }
 
-.card {
+.btn-primary {
+    color: #fff;
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #eef4ff;
+    color: var(--primary);
+    border: 1px solid #dbe7ff;
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: #fff;
+}
+
+.btn-success {
+    background: #16a34a;
+    color: #fff;
+}
+
+.btn-light {
+    background: #fff;
+    color: var(--text);
+    border: 1px solid var(--line);
+}
+
+/* =========================================================
+   7. ALERTS / FEEDBACK
+   ========================================================= */
+.alert {
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    font-size: 15px;
+    border: 1px solid transparent;
+}
+
+.alert-error {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    border-color: var(--danger-line);
+}
+
+.alert-success {
+    background: var(--success-bg);
+    color: var(--success-text);
+    border-color: var(--success-line);
+}
+
+.alert-warning {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+    border-color: var(--warning-line);
+}
+
+/* =========================================================
+   8. AUTH PAGES
+   ========================================================= */
+.auth-card {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.auth-card-wide {
+    max-width: 760px;
+}
+
+.auth-head {
+    margin-bottom: 20px;
+}
+
+.auth-head h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    line-height: 1.2;
+}
+
+.auth-head p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.auth-form {
+    display: grid;
+    gap: 16px;
+}
+
+.auth-submit {
+    width: 100%;
+    border: 0;
+    height: 52px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 4px;
+}
+
+.auth-foot {
+    margin-top: 18px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.auth-foot a {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* =========================================================
+   9. MULTI STEP FORM
+   ========================================================= */
+.step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    min-width: 0;
+}
+
+.step-item.is-active {
+    color: var(--text);
+}
+
+.step-number {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    background: #eef2f7;
+    color: var(--muted);
+    border: 1px solid var(--line);
+}
+
+.step-item.is-active .step-number {
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    color: #fff;
+    border-color: transparent;
+}
+
+.step-label {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.step-line {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+}
+
+.form-step {
+    display: none;
+}
+
+.form-step.is-active {
+    display: grid;
+    gap: 16px;
+}
+
+/* =========================================================
+   10. FORMS
+   ========================================================= */
+.form-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.form-row {
+    display: grid;
+    gap: 16px;
+}
+
+.form-group {
+    display: grid;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+}
+
+.form-group small {
+    color: var(--muted);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fff;
+    padding: 0 16px;
+    outline: none;
+    transition: var(--transition);
+    color: var(--text);
+}
+
+.form-group input,
+.form-group select {
+    height: 52px;
+}
+
+.form-group textarea {
+    min-height: 140px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-soft);
+}
+
+.form-group input[type="file"] {
+    height: auto;
+    padding: 14px 16px;
+    background: #fff;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+/* =========================================================
+   11. TABLE / CRUD LIST VIEW
+   ========================================================= */
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: #fff;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+}
+
+.table th,
+.table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+}
+
+.table th {
+    background: #f8fbff;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.table td {
+    color: #31435a;
+    font-size: 15px;
+}
+
+.table tr:last-child td {
+    border-bottom: 0;
+}
+
+/* =========================================================
+   12. ACTION BUTTONS
+   ========================================================= */
+.action-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.action-btn {
+    min-height: 38px;
+    padding: 0 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    background: #fff;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.action-btn:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+.action-btn-view {
+    color: var(--primary);
+    border-color: #dbe7ff;
+    background: #eff6ff;
+}
+
+.action-btn-edit {
+    color: #7c3aed;
+    border-color: #e9d5ff;
+    background: #faf5ff;
+}
+
+.action-btn-delete {
+    color: #b91c1c;
+    border-color: #fecaca;
+    background: #fef2f2;
+}
+
+.action-btn-success {
+    color: #166534;
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+}
+
+.action-btn-warning {
+    color: #c2410c;
+    border-color: #fdba74;
+    background: #fff7ed;
+}
+
+/* =========================================================
+   13. DASHBOARD / INFO CARDS
+   ========================================================= */
+.stats-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.info-card {
+    padding: 20px;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
 }
 
-/* Tablet */
+.info-card h3,
+.info-card h4 {
+    margin-bottom: 8px;
+}
+
+.info-card p {
+    margin-bottom: 0;
+    color: var(--muted);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.status-pending {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.status-approved,
+.status-active,
+.status-paid {
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.status-rejected,
+.status-suspended {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+/* =========================================================
+   14. EMPTY / HELP STATES
+   ========================================================= */
+.empty-state {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--muted);
+}
+
+.help-text {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* =========================================================
+   15. RESPONSIVE - TABLET
+   ========================================================= */
 @media (min-width: 768px) {
     .container {
         width: min(var(--container), calc(100% - 40px));
@@ -201,9 +745,23 @@ select {
     .footer-grid {
         grid-template-columns: 1.4fr 1fr;
     }
+
+    .form-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .step-label {
+        font-size: 15px;
+    }
 }
 
-/* Desktop */
+/* =========================================================
+   16. RESPONSIVE - DESKTOP
+   ========================================================= */
 @media (min-width: 1024px) {
     .menu-toggle {
         display: none;
@@ -223,7 +781,7 @@ select {
     }
 
     .main-nav a {
-        transition: 0.2s ease;
+        transition: var(--transition);
     }
 
     .main-nav a:hover {
@@ -234,4 +792,89 @@ select {
         grid-template-columns: 1.6fr 1fr;
         align-items: start;
     }
+
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .auth-card {
+        padding: 32px;
+    }
+}
+
+
+
+/* =========================================================
+   17. REGISTER UX IMPROVEMENTS
+   ========================================================= */
+input::placeholder,
+textarea::placeholder {
+    color: #94a3b8;
+    opacity: 1;
+    font-size: 14px;
+}
+
+.password-wrap {
+    position: relative;
+}
+
+.password-wrap input {
+    padding-right: 92px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 42px;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+}
+
+.match-indicator {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%) scale(0.8);
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    display: inline-grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s ease;
+}
+
+.match-indicator.is-visible {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
+
+.match-indicator.is-match {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.match-indicator.is-mismatch {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.text-success {
+    color: #166534;
+}
+
+.text-danger {
+    color: #b91c1c;
+}
+
+.text-warning {
+    color: #c2410c;
 }
