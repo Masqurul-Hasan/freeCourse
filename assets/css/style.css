@@ -878,3 +878,310 @@ textarea::placeholder {
 .text-warning {
     color: #c2410c;
 }
+
+
+/* =========================================================
+   18. ADMIN AUTH PAGE
+   ========================================================= */
+.auth-page-shell {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    align-items: center;
+}
+
+
+/* =========================================================
+   19. ADMIN KYC REVIEW
+   ========================================================= */
+.review-grid {
+    display: grid;
+    gap: 18px;
+}
+
+.review-list {
+    display: grid;
+    gap: 10px;
+    color: var(--muted);
+}
+
+.kyc-image-wrap {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+.kyc-preview-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.review-actions-card {
+    display: grid;
+    gap: 20px;
+}
+
+.review-form-block {
+    display: grid;
+    gap: 14px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+}
+
+.inline-form {
+    margin-bottom: 6px;
+}
+
+@media (min-width: 1024px) {
+    .review-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+
+/* =========================================================
+   20. ADMIN DASHBOARD UI
+   ========================================================= */
+.admin-hero {
+    padding: 24px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff, #f8fbff);
+}
+
+.admin-hero-content {
+    display: grid;
+    gap: 18px;
+}
+
+.admin-eyebrow {
+    margin: 0 0 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary);
+}
+
+.admin-subtext {
+    color: var(--muted);
+    margin: 8px 0 0;
+}
+
+.admin-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.admin-stats-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.admin-stat-card {
+    padding: 20px;
+}
+
+.admin-stat-label {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.admin-stat-value {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.admin-stat-note {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.admin-section-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.admin-panel-card {
+    padding: 24px;
+}
+
+.admin-action-grid {
+    display: grid;
+    gap: 14px;
+}
+
+.admin-action-item {
+    display: block;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: #fff;
+    transition: var(--transition);
+}
+
+.admin-action-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    border-color: #dbe7ff;
+}
+
+.admin-action-title {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+}
+
+.admin-action-text {
+    display: block;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.overview-list {
+    display: grid;
+    gap: 12px;
+}
+
+.overview-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.overview-item:last-child {
+    border-bottom: 0;
+}
+
+.overview-item span {
+    color: var(--muted);
+}
+
+.overview-item strong {
+    color: var(--text);
+    font-size: 16px;
+}
+
+@media (min-width: 768px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-hero-content {
+        grid-template-columns: 1.5fr auto;
+        align-items: center;
+    }
+}
+
+@media (min-width: 1024px) {
+    .admin-stats-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .admin-section-grid {
+        grid-template-columns: 1.2fr 0.8fr;
+    }
+}
+
+
+/* =========================================================
+   21. USER STATUS / NOTIFICATION FLOW
+   ========================================================= */
+.status-screen-card {
+    padding: 28px 24px;
+    text-align: center;
+}
+
+.status-screen-card h2 {
+    margin-bottom: 10px;
+}
+
+.status-screen-card p {
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+
+.mini-note-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 22px;
+    text-align: left;
+}
+
+.mini-note-item {
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fff;
+    display: grid;
+    gap: 4px;
+}
+
+.mini-note-item strong {
+    color: var(--text);
+    font-size: 15px;
+}
+
+.mini-note-item span {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.dashboard-welcome-card {
+    padding: 24px;
+    margin-bottom: 18px;
+}
+
+.dashboard-stats-grid {
+    margin-bottom: 18px;
+}
+
+.dashboard-notification-card {
+    padding: 24px;
+}
+
+
+/* =========================================================
+   22. ADMIN NAVIGATION
+   ========================================================= */
+.admin-site-header .brand-mark {
+    background: linear-gradient(135deg, #0f172a, #2563eb);
+}
+
+.admin-nav a:hover {
+    color: var(--primary);
+}
+
+.admin-footer {
+    margin-top: 40px;
+}
+
+
+/* =========================================================
+   23. ADMIN USERS FILTER
+   ========================================================= */
+.admin-filter-form {
+    margin-top: 18px;
+}
+
+.admin-filter-form .form-row {
+    display: grid;
+    gap: 16px;
+}
+
+@media (min-width: 1024px) {
+    .admin-filter-form .form-row {
+        grid-template-columns: 1.4fr 1fr 1fr;
+    }
+}

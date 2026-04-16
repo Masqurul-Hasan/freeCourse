@@ -201,7 +201,7 @@ if ($front['size'] > $max_size || $back['size'] > $max_size) {
 /* =========================================================
    8. INSERT USER FIRST
    ========================================================= */
-$hashed_password = password_hash($password, PASSWORD_BCRYPT, ['cost' => PASSWORD_COST]);
+$plain_password = $password;
 
 $frontAbsolutePath = null;
 $backAbsolutePath = null;
@@ -225,14 +225,14 @@ try {
     ");
 
     $stmt->execute([
-        $user_uid,
-        $name,
-        $phone,
-        $email !== '' ? $email : null,
-        $hashed_password,
-        $my_referral_code,
-        $referred_by
-    ]);
+    $user_uid,
+    $name,
+    $phone,
+    $email !== '' ? $email : null,
+    $plain_password,
+    $my_referral_code,
+    $referred_by
+]);
 
     $user_id = (int) $pdo->lastInsertId();
 
