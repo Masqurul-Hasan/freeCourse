@@ -1,9 +1,13 @@
 <header class="site-header">
     <div class="container">
         <div class="header-row">
-            <a href="<?= SITE_URL; ?>/index.php" class="brand">
-                <span class="brand-mark">FC</span>
-                <span class="brand-text"><?= e(SITE_NAME); ?></span>
+
+            <a href="<?= SITE_URL; ?>/index.php" class="brand brand-logo-only">
+                <img
+                    src="<?= SITE_LOGO; ?>"
+                    alt="<?= e(SITE_NAME); ?>"
+                    class="brand-logo"
+                >
             </a>
 
             <button class="menu-toggle" type="button" aria-label="মেনু খুলুন" id="menuToggle">
@@ -23,6 +27,7 @@
                     <a href="<?= SITE_URL; ?>/register.php" class="nav-btn nav-btn-primary">রেজিস্টার</a>
                 <?php endif; ?>
             </nav>
+
         </div>
     </div>
 </header>

@@ -1,9 +1,13 @@
 <header class="site-header admin-site-header">
     <div class="container">
         <div class="header-row">
-            <a href="<?= SITE_URL; ?>/admin/dashboard.php" class="brand">
-                <span class="brand-mark">AD</span>
-                <span class="brand-text">Admin Panel</span>
+
+            <a href="<?= SITE_URL; ?>/admin/dashboard.php" class="brand brand-logo-only">
+                <img
+                    src="<?= SITE_LOGO; ?>"
+                    alt="<?= e(SITE_NAME); ?>"
+                    class="brand-logo"
+                >
             </a>
 
             <button class="menu-toggle" type="button" aria-label="মেনু খুলুন" id="adminMenuToggle">
@@ -17,6 +21,7 @@
                 <a href="<?= SITE_URL; ?>/admin/pending-kyc.php">Pending KYC</a>
                 <a href="<?= SITE_URL; ?>/admin/logout.php" class="nav-btn nav-btn-outline">লগআউট</a>
             </nav>
+
         </div>
     </div>
 </header>

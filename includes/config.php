@@ -1,8 +1,10 @@
 <?php
 
 // Site Information
-define('SITE_NAME', 'Free Course');
+define('SITE_NAME', 'BD Workers');
 define('SITE_URL', 'http://localhost/freeCourse');
+define('SITE_LOGO', SITE_URL . '/assets/images/logo.png');
+define('SITE_FAVICON', SITE_URL . '/assets/images/favicon.png');
 
 // Wallet Settings
 define('SIGNUP_BONUS', 100);
@@ -20,3 +22,5 @@ define('PASSWORD_COST', 12);
 
 // Timezone
 date_default_timezone_set('Asia/Dhaka');
+
+

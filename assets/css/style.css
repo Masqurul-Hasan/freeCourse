@@ -1185,3 +1185,50 @@ textarea::placeholder {
         grid-template-columns: 1.4fr 1fr 1fr;
     }
 }
+
+/* =========================================================
+   24. Logo and others
+   ========================================================= */
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.brand-logo-only {
+    max-width: 220px;
+}
+
+.brand-logo {
+    display: block;
+    height: 44px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.brand-text {
+    display: none;
+}
+
+@media (max-width: 991px) {
+    .brand-logo-only {
+        max-width: 170px;
+    }
+
+    .brand-logo {
+        height: 36px;
+    }
+}
+
+@media (max-width: 640px) {
+    .brand-logo-only {
+        max-width: 140px;
+    }
+
+    .brand-logo {
+        height: 30px;
+    }
+}
