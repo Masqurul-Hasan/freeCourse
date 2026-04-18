@@ -6,8 +6,7 @@
                 <img
                     src="<?= SITE_LOGO; ?>"
                     alt="<?= e(SITE_NAME); ?>"
-                    class="brand-logo"
-                >
+                    class="brand-logo">
             </a>
 
             <button class="menu-toggle" type="button" aria-label="মেনু খুলুন" id="adminMenuToggle">
@@ -17,6 +16,10 @@
             <nav class="main-nav admin-nav" id="adminMainNav">
                 <a href="<?= SITE_URL; ?>/admin/dashboard.php">ড্যাশবোর্ড</a>
                 <a href="<?= SITE_URL; ?>/admin/users.php">ইউজারস</a>
+                <a href="<?= SITE_URL; ?>/admin/tasks.php">Tasks</a>
+                <a href="<?= SITE_URL; ?>/admin/task-submissions.php">Task Submissions</a>
+                <a href="<?= SITE_URL; ?>/admin/withdraw-requests.php">Withdraw Requests</a>
+                <a href="<?= SITE_URL; ?>/admin/wallet-transactions.php">Wallet Ledger</a>
                 <a href="<?= SITE_URL; ?>/admin/create-user.php">Create User</a>
                 <a href="<?= SITE_URL; ?>/admin/pending-kyc.php">Pending KYC</a>
                 <a href="<?= SITE_URL; ?>/admin/logout.php" class="nav-btn nav-btn-outline">লগআউট</a>
@@ -27,14 +30,14 @@
 </header>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const toggle = document.getElementById('adminMenuToggle');
-    const nav = document.getElementById('adminMainNav');
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('adminMenuToggle');
+        const nav = document.getElementById('adminMainNav');
 
-    if (toggle && nav) {
-        toggle.addEventListener('click', function () {
-            nav.classList.toggle('is-open');
-        });
-    }
-});
+        if (toggle && nav) {
+            toggle.addEventListener('click', function() {
+                nav.classList.toggle('is-open');
+            });
+        }
+    });
 </script>

@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/session.php';
 require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/security.php';
 require_once __DIR__ . '/../includes/admin-auth.php';
 
 $user_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -98,6 +99,72 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                     <?php endif; ?>
                 </div>
             </div>
+
+            <!-- Wallet Control Section Start -->
+            <div class="card info-card" style="margin-top: 24px;">
+                <h3>ওয়ালেট ব্যালেন্স কন্ট্রোল</h3>
+                <p style="margin-bottom: 16px; color: #666;">
+                    এখান থেকে admin manual ভাবে wallet balance add বা deduct করতে পারবে।
+                </p>
+
+                <div class="review-list" style="margin-bottom: 18px;">
+                    <div>
+                        <strong>Current Wallet Balance:</strong>
+                        ৳<?= number_format((float)$user['wallet_balance'], 2); ?>
+                    </div>
+                </div>
+
+                <form action="<?= SITE_URL; ?>/actions/admin/wallet-adjustment-action.php" method="POST">
+                    <input type="hidden" name="csrf_token" value="<?= csrf_token(); ?>">
+                    <input type="hidden" name="user_id" value="<?= (int)$user['id']; ?>">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adjustment_type">Adjustment Type</label>
+                            <select name="adjustment_type" id="adjustment_type" required>
+                                <option value="">Select Type</option>
+                                <option value="credit">Add Balance</option>
+                                <option value="debit">Deduct Balance</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0.01"
+                                name="amount"
+                                id="amount"
+                                placeholder="Enter amount"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reason">Reason</label>
+                        <textarea
+                            name="reason"
+                            id="reason"
+                            rows="4"
+                            placeholder="Example: Test balance, bonus, manual correction"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 16px;">
+                        <button
+                            type="submit"
+                            class="btn-primary"
+                            onclick="return confirm('আপনি কি এই wallet adjustment করতে চান?');"
+                        >
+                            Wallet Adjust করুন
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- Wallet Control Section End -->
 
             <div class="form-actions" style="margin-top: 24px;">
                 <a href="<?= SITE_URL; ?>/admin/edit-user.php?id=<?= (int)$user['id']; ?>" class="btn-primary">ইউজার Edit করুন</a>

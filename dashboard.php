@@ -12,13 +12,13 @@ if (empty($_SESSION['user_id'])) {
    REFRESH USER SESSION FROM DATABASE
    ========================================================= */
 $stmt = $pdo->prepare("
-    SELECT id, user_uid, name, phone, kyc_status, account_status
+    SELECT id, user_uid, name, phone, wallet_balance, kyc_status, account_status
     FROM users
     WHERE id = ?
     LIMIT 1
 ");
 $stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch();
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
     session_unset();
@@ -29,12 +29,16 @@ if (!$user) {
 $_SESSION['user_uid'] = $user['user_uid'];
 $_SESSION['user_name'] = $user['name'];
 $_SESSION['user_phone'] = $user['phone'];
+$_SESSION['wallet_balance'] = $user['wallet_balance'];
 $_SESSION['kyc_status'] = $user['kyc_status'];
 $_SESSION['account_status'] = $user['account_status'];
 
 $page_title = 'ড্যাশবোর্ড';
 $meta_description = 'ইউজার ড্যাশবোর্ড';
 
+/* =========================================================
+   RECENT NOTIFICATIONS
+   ========================================================= */
 $stmt = $pdo->prepare("
     SELECT *
     FROM notifications
@@ -43,7 +47,29 @@ $stmt = $pdo->prepare("
     LIMIT 5
 ");
 $stmt->execute([$_SESSION['user_id']]);
-$notifications = $stmt->fetchAll();
+$notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+/* =========================================================
+   UNREAD NOTIFICATION COUNT
+   ========================================================= */
+$stmt = $pdo->prepare("
+    SELECT COUNT(*)
+    FROM notifications
+    WHERE user_id = ? AND is_read = 0
+");
+$stmt->execute([$_SESSION['user_id']]);
+$unreadNotificationCount = (int) $stmt->fetchColumn();
+
+/* =========================================================
+   WITHDRAW REQUEST COUNT
+   ========================================================= */
+$stmt = $pdo->prepare("
+    SELECT COUNT(*)
+    FROM withdraw_requests
+    WHERE user_id = ?
+");
+$stmt->execute([$_SESSION['user_id']]);
+$totalWithdrawRequests = (int) $stmt->fetchColumn();
 
 include __DIR__ . '/includes/partials/head.php';
 include __DIR__ . '/includes/partials/header.php';
@@ -130,6 +156,11 @@ include __DIR__ . '/includes/partials/header.php';
                 </div>
 
                 <div class="info-card">
+                    <h3>ওয়ালেট ব্যালেন্স</h3>
+                    <p>৳<?= number_format((float)$_SESSION['wallet_balance'], 2); ?></p>
+                </div>
+
+                <div class="info-card">
                     <h3>KYC স্ট্যাটাস</h3>
                     <p><span class="status-badge status-approved"><?= e($_SESSION['kyc_status']); ?></span></p>
                 </div>
@@ -137,6 +168,60 @@ include __DIR__ . '/includes/partials/header.php';
                 <div class="info-card">
                     <h3>অ্যাকাউন্ট স্ট্যাটাস</h3>
                     <p><?= e($_SESSION['account_status']); ?></p>
+                </div>
+            </div>
+
+            <div class="card dashboard-notification-card" style="margin-bottom: 24px;">
+                <div class="section-head">
+                    <h2>Quick Access</h2>
+                    <p>গুরুত্বপূর্ণ user action গুলো এখান থেকে দ্রুত access করুন</p>
+                </div>
+
+                <div class="stats-grid dashboard-stats-grid">
+                    <div class="info-card">
+                        <h3>Wallet</h3>
+                        <p>আপনার wallet balance এবং সব transaction দেখুন</p>
+                        <div class="form-actions" style="margin-top: 14px;">
+                            <a href="<?= SITE_URL; ?>/wallet.php" class="btn-primary">Wallet দেখুন</a>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Withdraw</h3>
+                        <p>নতুন withdraw request পাঠান</p>
+                        <div class="form-actions" style="margin-top: 14px;">
+                            <a href="<?= SITE_URL; ?>/withdraw.php" class="btn-primary">Withdraw করুন</a>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Withdraw History</h3>
+                        <p>আপনার আগের withdraw request গুলোর status দেখুন</p>
+                        <div class="form-actions" style="margin-top: 14px;">
+                            <a href="<?= SITE_URL; ?>/withdraw-history.php" class="btn-primary">History দেখুন</a>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Notifications</h3>
+                        <p>
+                            আপনার account, wallet এবং withdraw notification দেখুন
+                            <?php if ($unreadNotificationCount > 0): ?>
+                                <br><strong><?= $unreadNotificationCount; ?> টি unread</strong>
+                            <?php endif; ?>
+                        </p>
+                        <div class="form-actions" style="margin-top: 14px;">
+                            <a href="<?= SITE_URL; ?>/notifications.php" class="btn-primary">Notifications দেখুন</a>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Total Withdraw Requests</h3>
+                        <p><?= $totalWithdrawRequests; ?> টি request পাওয়া গেছে</p>
+                        <div class="form-actions" style="margin-top: 14px;">
+                            <a href="<?= SITE_URL; ?>/withdraw-history.php" class="btn-light">সব request</a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -153,6 +238,10 @@ include __DIR__ . '/includes/partials/header.php';
                                 <span><?= e($note['message']); ?></span>
                             </div>
                         <?php endforeach; ?>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 18px;">
+                        <a href="<?= SITE_URL; ?>/notifications.php" class="btn-light">সব নোটিফিকেশন দেখুন</a>
                     </div>
                 </div>
             <?php endif; ?>

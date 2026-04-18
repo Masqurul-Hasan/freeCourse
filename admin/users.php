@@ -115,8 +115,7 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                             id="search"
                             name="search"
                             value="<?= e($search); ?>"
-                            placeholder="নাম / ফোন / ইমেইল / UID"
-                        >
+                            placeholder="নাম / ফোন / ইমেইল / UID">
                     </div>
 
                     <div class="form-group">
@@ -199,14 +198,14 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                                     </td>
 
                                     <td>
-<?php if (!empty($user['nid_front_image']) || !empty($user['nid_back_image'])): ?>
-    <a href="<?= SITE_URL; ?>/admin/user-nid.php?user_id=<?= (int)$user['id']; ?>" class="action-btn action-btn-view">
-        View
-    </a>
-<?php else: ?>
-    <span style="color:#999;">No NID</span>
-<?php endif; ?>
-</td>
+                                        <?php if (!empty($user['nid_front_image']) || !empty($user['nid_back_image'])): ?>
+                                            <a href="<?= SITE_URL; ?>/admin/user-nid.php?user_id=<?= (int)$user['id']; ?>" class="action-btn action-btn-view">
+                                                View
+                                            </a>
+                                        <?php else: ?>
+                                            <span style="color:#999;">No NID</span>
+                                        <?php endif; ?>
+                                    </td>
 
                                     <td>
                                         <?php

@@ -1,3 +1,19 @@
+<?php
+$unreadNotificationCount = 0;
+
+if (!empty($_SESSION['user_id'])) {
+
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*)
+        FROM notifications
+        WHERE user_id = ? AND is_read = 0
+    ");
+    $stmt->execute([$_SESSION['user_id']]);
+
+    $unreadNotificationCount = (int) $stmt->fetchColumn();
+}
+?>
+
 <header class="site-header">
     <div class="container">
         <div class="header-row">
@@ -21,6 +37,20 @@
 
                 <?php if (!empty($_SESSION['user_id'])): ?>
                     <a href="<?= SITE_URL; ?>/dashboard.php">ড্যাশবোর্ড</a>
+                    <a href="<?= SITE_URL; ?>/tasks.php">Tasks</a>
+                    <a href="<?= SITE_URL; ?>/wallet.php">ওয়ালেট</a>
+                    <a href="<?= SITE_URL; ?>/withdraw.php">উইথড্র</a>
+                    <a href="<?= SITE_URL; ?>/withdraw-history.php">হিস্টোরি</a>
+
+                    <a href="<?= SITE_URL; ?>/notifications.php" class="notification-nav">
+                        নোটিফিকেশন
+                        <?php if ($unreadNotificationCount > 0): ?>
+                            <span class="notification-badge">
+                                <?= $unreadNotificationCount ?>
+                            </span>
+                        <?php endif; ?>
+                    </a>
+
                     <a href="<?= SITE_URL; ?>/logout.php" class="nav-btn nav-btn-outline">লগআউট</a>
                 <?php else: ?>
                     <a href="<?= SITE_URL; ?>/login.php" class="nav-btn nav-btn-outline">লগইন</a>
