@@ -19,23 +19,25 @@ $kyc_id = (int) ($_POST['kyc_id'] ?? 0);
 $user_id = (int) ($_POST['user_id'] ?? 0);
 $admin_comment = trim($_POST['admin_comment'] ?? '');
 
-if ($kyc_id <= 0 || $user_id <= 0 || $admin_comment === '') {
+if ($user_id <= 0 || $admin_comment === '') {
     setFlash('error', 'সব তথ্য সঠিকভাবে দিন।');
-    redirect(SITE_URL . '/admin/kyc-details.php?id=' . $kyc_id);
+    redirect(SITE_URL . '/admin/pending-kyc.php');
 }
 
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("
-        UPDATE kyc_submissions
-        SET status = 'resubmit_required',
-            admin_comment = ?,
-            reviewed_at = NOW(),
-            updated_at = NOW()
-        WHERE id = ?
-    ");
-    $stmt->execute([$admin_comment, $kyc_id]);
+    if ($kyc_id > 0) {
+        $stmt = $pdo->prepare("
+            UPDATE kyc_submissions
+            SET status = 'resubmit_required',
+                admin_comment = ?,
+                reviewed_at = NOW(),
+                updated_at = NOW()
+            WHERE id = ?
+        ");
+        $stmt->execute([$admin_comment, $kyc_id]);
+    }
 
     $stmt = $pdo->prepare("
         UPDATE users
@@ -65,5 +67,5 @@ try {
     }
 
     setFlash('error', 'Resubmission request পাঠানো যায়নি।');
-    redirect(SITE_URL . '/admin/kyc-details.php?id=' . $kyc_id);
+    redirect(SITE_URL . '/admin/kyc-details.php?user_id=' . $user_id);
 }

@@ -18,7 +18,7 @@ if (!verify_csrf($_POST['csrf_token'] ?? '')) {
 $kyc_id = (int) ($_POST['kyc_id'] ?? 0);
 $user_id = (int) ($_POST['user_id'] ?? 0);
 
-if ($kyc_id <= 0 || $user_id <= 0) {
+if ($user_id <= 0) {
     setFlash('error', 'অবৈধ তথ্য।');
     redirect(SITE_URL . '/admin/pending-kyc.php');
 }
@@ -26,15 +26,17 @@ if ($kyc_id <= 0 || $user_id <= 0) {
 try {
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("
-        UPDATE kyc_submissions
-        SET status = 'approved',
-            admin_comment = NULL,
-            reviewed_at = NOW(),
-            updated_at = NOW()
-        WHERE id = ?
-    ");
-    $stmt->execute([$kyc_id]);
+    if ($kyc_id > 0) {
+        $stmt = $pdo->prepare("
+            UPDATE kyc_submissions
+            SET status = 'approved',
+                admin_comment = NULL,
+                reviewed_at = NOW(),
+                updated_at = NOW()
+            WHERE id = ?
+        ");
+        $stmt->execute([$kyc_id]);
+    }
 
     $stmt = $pdo->prepare("
         UPDATE users
@@ -64,5 +66,5 @@ try {
     }
 
     setFlash('error', 'KYC approve করা যায়নি।');
-    redirect(SITE_URL . '/admin/kyc-details.php?id=' . $kyc_id);
+    redirect(SITE_URL . '/admin/kyc-details.php?user_id=' . $user_id);
 }

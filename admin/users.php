@@ -14,19 +14,34 @@ $account_status = trim($_GET['account_status'] ?? '');
 
 $sql = "
     SELECT 
-        id,
-        user_uid,
-        name,
-        phone,
-        email,
-        password,
-        referral_code,
-        referred_by,
-        wallet_balance,
-        kyc_status,
-        account_status,
-        created_at
-    FROM users
+        u.id,
+        u.user_uid,
+        u.name,
+        u.phone,
+        u.email,
+        u.password,
+        u.referral_code,
+        u.referred_by,
+        u.wallet_balance,
+        u.kyc_status,
+        u.account_status,
+        u.created_at,
+
+        k.id AS kyc_id,
+        k.nid_front_image,
+        k.nid_back_image
+
+    FROM users u
+
+    LEFT JOIN kyc_submissions k
+        ON k.id = (
+            SELECT ks.id
+            FROM kyc_submissions ks
+            WHERE ks.user_id = u.id
+            ORDER BY ks.id DESC
+            LIMIT 1
+        )
+
     WHERE 1=1
 ";
 
@@ -37,10 +52,10 @@ $params = [];
    ========================================================= */
 if ($search !== '') {
     $sql .= " AND (
-        name LIKE ?
-        OR phone LIKE ?
-        OR email LIKE ?
-        OR user_uid LIKE ?
+        u.name LIKE ?
+        OR u.phone LIKE ?
+        OR u.email LIKE ?
+        OR u.user_uid LIKE ?
     )";
     $searchTerm = '%' . $search . '%';
     $params[] = $searchTerm;
@@ -53,7 +68,7 @@ if ($search !== '') {
    KYC FILTER
    ========================================================= */
 if ($kyc_status !== '') {
-    $sql .= " AND kyc_status = ?";
+    $sql .= " AND u.kyc_status = ?";
     $params[] = $kyc_status;
 }
 
@@ -61,11 +76,11 @@ if ($kyc_status !== '') {
    ACCOUNT FILTER
    ========================================================= */
 if ($account_status !== '') {
-    $sql .= " AND account_status = ?";
+    $sql .= " AND u.account_status = ?";
     $params[] = $account_status;
 }
 
-$sql .= " ORDER BY id DESC";
+$sql .= " ORDER BY u.id DESC";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -83,6 +98,14 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                 <p>সমস্ত ইউজার, KYC অবস্থা, অ্যাকাউন্ট স্ট্যাটাস এবং তথ্য এখানে দেখা যাবে</p>
             </div>
 
+            <?php if ($msg = getFlash('success')): ?>
+                <div class="alert alert-success"><?= e($msg); ?></div>
+            <?php endif; ?>
+
+            <?php if ($msg = getFlash('error')): ?>
+                <div class="alert alert-error"><?= e($msg); ?></div>
+            <?php endif; ?>
+
             <form method="GET" action="" class="admin-filter-form">
                 <div class="form-row">
                     <div class="form-group">
@@ -92,7 +115,8 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                             id="search"
                             name="search"
                             value="<?= e($search); ?>"
-                            placeholder="নাম / ফোন / ইমেইল / UID">
+                            placeholder="নাম / ফোন / ইমেইল / UID"
+                        >
                     </div>
 
                     <div class="form-group">
@@ -136,6 +160,7 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                                 <th>যোগাযোগ</th>
                                 <th>পাসওয়ার্ড</th>
                                 <th>KYC</th>
+                                <th>NID</th>
                                 <th>অ্যাকাউন্ট</th>
                                 <th>ওয়ালেট</th>
                                 <th>তারিখ</th>
@@ -172,6 +197,16 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                                             <?= e($user['kyc_status']); ?>
                                         </span>
                                     </td>
+
+                                    <td>
+<?php if (!empty($user['nid_front_image']) || !empty($user['nid_back_image'])): ?>
+    <a href="<?= SITE_URL; ?>/admin/user-nid.php?user_id=<?= (int)$user['id']; ?>" class="action-btn action-btn-view">
+        View
+    </a>
+<?php else: ?>
+    <span style="color:#999;">No NID</span>
+<?php endif; ?>
+</td>
 
                                     <td>
                                         <?php

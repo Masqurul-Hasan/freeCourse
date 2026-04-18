@@ -8,25 +8,42 @@ require_once __DIR__ . '/../includes/admin-auth.php';
 $page_title = 'Pending KYC';
 $meta_description = 'Pending KYC list';
 
+/* =====================================================
+   Show all users who are currently pending
+   Even if they don't have a KYC row yet
+   ===================================================== */
 $stmt = $pdo->query("
-    SELECT 
+    SELECT
+        u.id AS user_id,
+        u.name,
+        u.phone,
+        u.email,
+        u.user_uid,
+        u.kyc_status,
+
         k.id AS kyc_id,
-        k.user_id,
         k.nid_number,
         k.date_of_birth,
         k.bkash_number,
         k.nid_front_image,
         k.nid_back_image,
         k.status,
-        k.submitted_at,
-        u.name,
-        u.phone,
-        u.email,
-        u.user_uid
-    FROM kyc_submissions k
-    INNER JOIN users u ON k.user_id = u.id
-    WHERE k.status = 'pending'
-    ORDER BY k.id DESC
+        k.submitted_at
+
+    FROM users u
+
+    LEFT JOIN kyc_submissions k
+        ON k.id = (
+            SELECT ks.id
+            FROM kyc_submissions ks
+            WHERE ks.user_id = u.id
+            ORDER BY ks.id DESC
+            LIMIT 1
+        )
+
+    WHERE u.kyc_status = 'pending'
+
+    ORDER BY u.id DESC
 ");
 
 $kycRows = $stmt->fetchAll();
@@ -42,6 +59,14 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                 <h1>Pending KYC তালিকা</h1>
                 <p>যেসব ইউজারের KYC review বাকি আছে, সেগুলো এখানে দেখানো হচ্ছে</p>
             </div>
+
+            <?php if ($msg = getFlash('success')): ?>
+                <div class="alert alert-success"><?= e($msg); ?></div>
+            <?php endif; ?>
+
+            <?php if ($msg = getFlash('error')): ?>
+                <div class="alert alert-error"><?= e($msg); ?></div>
+            <?php endif; ?>
 
             <?php if (empty($kycRows)): ?>
                 <div class="empty-state">
@@ -66,22 +91,29 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                             <?php foreach ($kycRows as $index => $row): ?>
                                 <tr>
                                     <td><?= $index + 1; ?></td>
+
                                     <td>
                                         <strong><?= e($row['name']); ?></strong><br>
                                         <small><?= e($row['user_uid']); ?></small>
                                     </td>
+
                                     <td><?= e($row['phone']); ?></td>
-                                    <td><?= e($row['nid_number']); ?></td>
-                                    <td><?= e($row['bkash_number']); ?></td>
+
+                                    <td><?= e($row['nid_number'] ?: 'No KYC'); ?></td>
+
+                                    <td><?= e($row['bkash_number'] ?: 'No KYC'); ?></td>
+
                                     <td>
                                         <span class="status-badge status-pending">
-                                            <?= e($row['status']); ?>
+                                            <?= e($row['kyc_status']); ?>
                                         </span>
                                     </td>
-                                    <td><?= e($row['submitted_at']); ?></td>
+
+                                    <td><?= e($row['submitted_at'] ?: 'Not Submitted'); ?></td>
+
                                     <td>
                                         <div class="action-group">
-                                            <a href="<?= SITE_URL; ?>/admin/kyc-details.php?id=<?= (int)$row['kyc_id']; ?>" class="action-btn action-btn-view">
+                                            <a href="<?= SITE_URL; ?>/admin/kyc-details.php?user_id=<?= (int)$row['user_id']; ?>" class="action-btn action-btn-view">
                                                 Review
                                             </a>
                                         </div>

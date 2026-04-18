@@ -8,11 +8,15 @@ require_once __DIR__ . '/../includes/admin-auth.php';
 $page_title = 'এডমিন ড্যাশবোর্ড';
 $meta_description = 'এডমিন ড্যাশবোর্ড';
 
+/* =========================================================
+   DASHBOARD STATS
+   Main source of truth = users.kyc_status
+   ========================================================= */
 $totalUsers = (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
-$pendingKyc = (int) $pdo->query("SELECT COUNT(*) FROM kyc_submissions WHERE status = 'pending'")->fetchColumn();
-$approvedKyc = (int) $pdo->query("SELECT COUNT(*) FROM kyc_submissions WHERE status = 'approved'")->fetchColumn();
-$rejectedKyc = (int) $pdo->query("SELECT COUNT(*) FROM kyc_submissions WHERE status = 'rejected'")->fetchColumn();
-$resubmitKyc = (int) $pdo->query("SELECT COUNT(*) FROM kyc_submissions WHERE status = 'resubmit_required'")->fetchColumn();
+$pendingKyc = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE kyc_status = 'pending'")->fetchColumn();
+$approvedKyc = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE kyc_status = 'approved'")->fetchColumn();
+$rejectedKyc = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE kyc_status = 'rejected'")->fetchColumn();
+$resubmitKyc = (int) $pdo->query("SELECT COUNT(*) FROM users WHERE kyc_status = 'resubmit_required'")->fetchColumn();
 
 include __DIR__ . '/../includes/partials/head.php';
 include __DIR__ . '/../includes/partials/admin-header.php';
@@ -26,13 +30,15 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                     <p class="admin-eyebrow">Admin Panel</p>
                     <h1>স্বাগতম, <?= e($_SESSION['admin_name']); ?></h1>
                     <p class="admin-subtext">
-                        এডমিন ইমেইল: <?= e($_SESSION['admin_email']); ?> <br>
+                        এডমিন ইমেইল: <?= e($_SESSION['admin_email']); ?><br>
                         রোল: <?= e($_SESSION['admin_role']); ?>
                     </p>
                 </div>
 
                 <div class="admin-hero-actions">
                     <a href="<?= SITE_URL; ?>/admin/pending-kyc.php" class="btn-primary">Pending KYC দেখুন</a>
+                    <a href="<?= SITE_URL; ?>/admin/users.php" class="btn-light">ইউজারস</a>
+                    <a href="<?= SITE_URL; ?>/admin/create-user.php" class="btn-light">Create User</a>
                     <a href="<?= SITE_URL; ?>/admin/logout.php" class="btn-light">লগআউট</a>
                 </div>
             </div>
@@ -83,9 +89,14 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                         <span class="admin-action-text">যেসব ইউজারের KYC review বাকি আছে সেগুলো দেখুন</span>
                     </a>
 
-                    <a href="<?= SITE_URL; ?>/admin/pending-kyc.php" class="admin-action-item">
-                        <span class="admin-action-title">Approve / Reject KYC</span>
-                        <span class="admin-action-text">KYC status update করুন</span>
+                    <a href="<?= SITE_URL; ?>/admin/users.php" class="admin-action-item">
+                        <span class="admin-action-title">Users Management</span>
+                        <span class="admin-action-text">সব ইউজার দেখুন, সার্চ করুন, এডিট করুন</span>
+                    </a>
+
+                    <a href="<?= SITE_URL; ?>/admin/create-user.php" class="admin-action-item">
+                        <span class="admin-action-title">Create User</span>
+                        <span class="admin-action-text">এডমিন থেকে সরাসরি নতুন ইউজার তৈরি করুন</span>
                     </a>
 
                     <a href="<?= SITE_URL; ?>/admin/logout.php" class="admin-action-item">
@@ -106,18 +117,22 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                         <span>Pending KYC</span>
                         <strong><?= $pendingKyc; ?></strong>
                     </div>
+
                     <div class="overview-item">
                         <span>Approved KYC</span>
                         <strong><?= $approvedKyc; ?></strong>
                     </div>
+
                     <div class="overview-item">
                         <span>Rejected KYC</span>
                         <strong><?= $rejectedKyc; ?></strong>
                     </div>
+
                     <div class="overview-item">
                         <span>Resubmit Required</span>
                         <strong><?= $resubmitKyc; ?></strong>
                     </div>
+
                     <div class="overview-item">
                         <span>Total Users</span>
                         <strong><?= $totalUsers; ?></strong>
