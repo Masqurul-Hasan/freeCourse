@@ -18,6 +18,33 @@ function save_old_register_input(array $data): void
     ];
 }
 
+function make_referral_code(int $length = 8): string
+{
+    $characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    $maxIndex = strlen($characters) - 1;
+    $code = '';
+
+    for ($i = 0; $i < $length; $i++) {
+        $code .= $characters[random_int(0, $maxIndex)];
+    }
+
+    return $code;
+}
+
+function generate_unique_referral_code(PDO $pdo, int $length = 8): string
+{
+    do {
+        $code = make_referral_code($length);
+
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE referral_code = ? LIMIT 1");
+        $stmt->execute([$code]);
+        $exists = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    } while ($exists);
+
+    return $code;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect(SITE_URL . '/register.php');
 }
@@ -52,7 +79,7 @@ $oldInput = [
 ];
 
 /* =========================================================
-   2. BASIC INFO VALIDATION (STEP 1 ERRORS)
+   2. BASIC INFO VALIDATION
    ========================================================= */
 if ($name === '' || $phone === '' || $password === '' || $confirm_password === '') {
     save_old_register_input($oldInput);
@@ -73,7 +100,7 @@ if (strlen($password) < 6) {
 }
 
 /* =========================================================
-   3. KYC VALIDATION (STEP 2 ERRORS)
+   3. KYC VALIDATION
    ========================================================= */
 if ($nid_number === '' || $date_of_birth === '' || $bkash_number === '') {
     save_old_register_input($oldInput);
@@ -93,40 +120,35 @@ if (
 /* =========================================================
    4. DUPLICATE CHECKS
    ========================================================= */
-
-// Phone duplicate
 $stmt = $pdo->prepare("SELECT id FROM users WHERE phone = ? LIMIT 1");
 $stmt->execute([$phone]);
-if ($stmt->fetch()) {
+if ($stmt->fetch(PDO::FETCH_ASSOC)) {
     save_old_register_input($oldInput);
     setFlash('error', 'এই মোবাইল নাম্বার দিয়ে ইতোমধ্যে অ্যাকাউন্ট আছে।');
     redirect(SITE_URL . '/register.php?step=1');
 }
 
-// Email duplicate
 if ($email !== '') {
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
     $stmt->execute([$email]);
-    if ($stmt->fetch()) {
+    if ($stmt->fetch(PDO::FETCH_ASSOC)) {
         save_old_register_input($oldInput);
         setFlash('error', 'এই ইমেইল দিয়ে ইতোমধ্যে অ্যাকাউন্ট আছে।');
         redirect(SITE_URL . '/register.php?step=1');
     }
 }
 
-// NID duplicate
 $stmt = $pdo->prepare("SELECT id FROM kyc_submissions WHERE nid_number = ? LIMIT 1");
 $stmt->execute([$nid_number]);
-if ($stmt->fetch()) {
+if ($stmt->fetch(PDO::FETCH_ASSOC)) {
     save_old_register_input($oldInput);
     setFlash('error', 'এই এনআইডি নাম্বার ইতোমধ্যে ব্যবহার করা হয়েছে।');
     redirect(SITE_URL . '/register.php?step=2');
 }
 
-// bKash duplicate
 $stmt = $pdo->prepare("SELECT id FROM kyc_submissions WHERE bkash_number = ? LIMIT 1");
 $stmt->execute([$bkash_number]);
-if ($stmt->fetch()) {
+if ($stmt->fetch(PDO::FETCH_ASSOC)) {
     save_old_register_input($oldInput);
     setFlash('error', 'এই বিকাশ নাম্বার ইতোমধ্যে ব্যবহার করা হয়েছে।');
     redirect(SITE_URL . '/register.php?step=2');
@@ -134,21 +156,38 @@ if ($stmt->fetch()) {
 
 /* =========================================================
    5. VALIDATE REFERRAL CODE
+   Logic:
+   - no referral => bonus 100
+   - valid referral => bonus 150
+   referred_by stores referral code string
    ========================================================= */
 $referred_by = null;
+$bonusAmount = 100;
+$walletSource = 'signup_bonus';
+$walletDescription = 'Signup bonus';
+$referrerUserId = null;
 
 if ($referral_input !== '') {
-    $stmt = $pdo->prepare("SELECT referral_code FROM users WHERE referral_code = ? LIMIT 1");
+    $stmt = $pdo->prepare("
+        SELECT id, referral_code
+        FROM users
+        WHERE referral_code = ?
+        LIMIT 1
+    ");
     $stmt->execute([$referral_input]);
-    $ref_user = $stmt->fetch();
+    $refUser = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$ref_user) {
+    if (!$refUser) {
         save_old_register_input($oldInput);
         setFlash('error', 'রেফারেল কোড সঠিক নয়।');
         redirect(SITE_URL . '/register.php?step=1');
     }
 
-    $referred_by = $referral_input;
+    $referred_by = $refUser['referral_code'];
+    $referrerUserId = (int)$refUser['id'];
+    $bonusAmount = 150;
+    $walletSource = 'referral_bonus';
+    $walletDescription = 'Referral signup bonus';
 }
 
 /* =========================================================
@@ -156,26 +195,19 @@ if ($referral_input !== '') {
    ========================================================= */
 $user_uid = generateUserUID();
 do {
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE user_uid = ?");
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE user_uid = ? LIMIT 1");
     $stmt->execute([$user_uid]);
-    $exists_uid = $stmt->fetch();
+    $exists_uid = $stmt->fetch(PDO::FETCH_ASSOC);
+
     if ($exists_uid) {
         $user_uid = generateUserUID();
     }
 } while ($exists_uid);
 
-$my_referral_code = generateReferralCode(8);
-do {
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE referral_code = ?");
-    $stmt->execute([$my_referral_code]);
-    $exists_ref = $stmt->fetch();
-    if ($exists_ref) {
-        $my_referral_code = generateReferralCode(8);
-    }
-} while ($exists_ref);
+$my_referral_code = generate_unique_referral_code($pdo, 8);
 
 /* =========================================================
-   7. FILE UPLOAD VALIDATION
+   7. FILE VALIDATION
    ========================================================= */
 $allowed_ext = ['jpg', 'jpeg', 'png'];
 $max_size = 5 * 1024 * 1024;
@@ -186,7 +218,7 @@ $back = $_FILES['nid_back_image'];
 $front_ext = strtolower(pathinfo($front['name'], PATHINFO_EXTENSION));
 $back_ext = strtolower(pathinfo($back['name'], PATHINFO_EXTENSION));
 
-if (!in_array($front_ext, $allowed_ext) || !in_array($back_ext, $allowed_ext)) {
+if (!in_array($front_ext, $allowed_ext, true) || !in_array($back_ext, $allowed_ext, true)) {
     save_old_register_input($oldInput);
     setFlash('error', 'শুধুমাত্র JPG, JPEG অথবা PNG ফাইল গ্রহণযোগ্য।');
     redirect(SITE_URL . '/register.php?step=2');
@@ -199,7 +231,7 @@ if ($front['size'] > $max_size || $back['size'] > $max_size) {
 }
 
 /* =========================================================
-   8. INSERT USER FIRST
+   8. INSERT USER + BONUS + KYC
    ========================================================= */
 $plain_password = $password;
 
@@ -221,52 +253,100 @@ try {
             wallet_balance,
             kyc_status,
             account_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 'pending', 'active')
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'active')
     ");
 
     $stmt->execute([
-    $user_uid,
-    $name,
-    $phone,
-    $email !== '' ? $email : null,
-    $plain_password,
-    $my_referral_code,
-    $referred_by
-]);
+        $user_uid,
+        $name,
+        $phone,
+        $email !== '' ? $email : null,
+        $plain_password,
+        $my_referral_code,
+        $referred_by,
+        0
+    ]);
 
-    $user_id = (int) $pdo->lastInsertId();
+    $user_id = (int)$pdo->lastInsertId();
+
+    /* wallet bonus */
+    $stmt = $pdo->prepare("
+        UPDATE users
+        SET wallet_balance = wallet_balance + ?
+        WHERE id = ?
+        LIMIT 1
+    ");
+    $stmt->execute([$bonusAmount, $user_id]);
+
+    /* wallet transaction */
+    $stmt = $pdo->prepare("
+        INSERT INTO wallet_transactions (
+            user_id,
+            amount,
+            type,
+            source,
+            reference_id,
+            description,
+            created_at
+        ) VALUES (?, ?, 'credit', ?, 0, ?, NOW())
+    ");
+    $stmt->execute([
+        $user_id,
+        $bonusAmount,
+        $walletSource,
+        $walletDescription
+    ]);
+
+    /* notification */
+    $stmt = $pdo->prepare("
+        INSERT INTO notifications (
+            user_id,
+            title,
+            message,
+            is_read,
+            created_at
+        ) VALUES (?, ?, ?, 0, NOW())
+    ");
+    $stmt->execute([
+        $user_id,
+        $referrerUserId ? 'Referral Bonus Added' : 'Signup Bonus Added',
+        $referrerUserId
+            ? 'রেফারেল কোড ব্যবহার করে রেজিস্ট্রেশন করার জন্য আপনার wallet-এ ৳150.00 যোগ করা হয়েছে।'
+            : 'রেজিস্ট্রেশন বোনাস হিসেবে আপনার wallet-এ ৳100.00 যোগ করা হয়েছে।'
+    ]);
 
     /* =====================================================
-   9. CREATE USER-SPECIFIC FOLDER
-   ===================================================== */
-$projectRoot = realpath(__DIR__ . '/../../');
+       9. CREATE USER FOLDER
+       ===================================================== */
+    $projectRoot = realpath(__DIR__ . '/../../');
 
-if ($projectRoot === false) {
-    throw new Exception('প্রজেক্ট root path পাওয়া যায়নি।');
-}
-
-$baseUploadAbsolute = $projectRoot . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'nid' . DIRECTORY_SEPARATOR;
-
-if (!is_dir($baseUploadAbsolute)) {
-    if (!mkdir($baseUploadAbsolute, 0777, true) && !is_dir($baseUploadAbsolute)) {
-        throw new Exception('মূল uploads/nid ফোল্ডার তৈরি করা যায়নি।');
+    if ($projectRoot === false) {
+        throw new Exception('প্রজেক্ট root path পাওয়া যায়নি।');
     }
-}
 
-if (!is_writable($baseUploadAbsolute)) {
-    throw new Exception('uploads/nid ফোল্ডারে write permission নেই।');
-}
+    $baseUploadAbsolute = $projectRoot . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'nid' . DIRECTORY_SEPARATOR;
 
-$userFolderRelative = 'uploads/nid/' . $user_id . '/';
-$userFolderAbsolute = $baseUploadAbsolute . $user_id . DIRECTORY_SEPARATOR;
-
-if (!is_dir($userFolderAbsolute)) {
-    if (!mkdir($userFolderAbsolute, 0777, true) && !is_dir($userFolderAbsolute)) {
-        throw new Exception('ইউজার ফোল্ডার তৈরি করা যায়নি।');
+    if (!is_dir($baseUploadAbsolute)) {
+        if (!mkdir($baseUploadAbsolute, 0777, true) && !is_dir($baseUploadAbsolute)) {
+            throw new Exception('মূল uploads/nid ফোল্ডার তৈরি করা যায়নি।');
+        }
     }
-}
+
+    if (!is_writable($baseUploadAbsolute)) {
+        throw new Exception('uploads/nid ফোল্ডারে write permission নেই।');
+    }
+
+    $userFolderRelative = 'uploads/nid/' . $user_id . '/';
+    $userFolderAbsolute = $baseUploadAbsolute . $user_id . DIRECTORY_SEPARATOR;
+
+    if (!is_dir($userFolderAbsolute)) {
+        if (!mkdir($userFolderAbsolute, 0777, true) && !is_dir($userFolderAbsolute)) {
+            throw new Exception('ইউজার ফোল্ডার তৈরি করা যায়নি।');
+        }
+    }
+
     /* =====================================================
-       10. SAVE FILES INSIDE USER FOLDER
+       10. SAVE FILES
        ===================================================== */
     $timestamp = time();
     $randomPart = bin2hex(random_bytes(4));
@@ -320,7 +400,7 @@ if (!is_dir($userFolderAbsolute)) {
     setFlash('success', 'রেজিস্ট্রেশন এবং KYC জমা সম্পন্ন হয়েছে। এখন লগইন করুন।');
     redirect(SITE_URL . '/login.php');
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
