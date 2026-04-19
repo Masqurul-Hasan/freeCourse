@@ -156,16 +156,10 @@ if ($stmt->fetch(PDO::FETCH_ASSOC)) {
 
 /* =========================================================
    5. VALIDATE REFERRAL CODE
-   Logic:
-   - no referral => bonus 100
-   - valid referral => bonus 150
    referred_by stores referral code string
+   NO wallet bonus at registration
    ========================================================= */
 $referred_by = null;
-$bonusAmount = 100;
-$walletSource = 'signup_bonus';
-$walletDescription = 'Signup bonus';
-$referrerUserId = null;
 
 if ($referral_input !== '') {
     $stmt = $pdo->prepare("
@@ -184,10 +178,6 @@ if ($referral_input !== '') {
     }
 
     $referred_by = $refUser['referral_code'];
-    $referrerUserId = (int)$refUser['id'];
-    $bonusAmount = 150;
-    $walletSource = 'referral_bonus';
-    $walletDescription = 'Referral signup bonus';
 }
 
 /* =========================================================
@@ -231,7 +221,7 @@ if ($front['size'] > $max_size || $back['size'] > $max_size) {
 }
 
 /* =========================================================
-   8. INSERT USER + BONUS + KYC
+   8. INSERT USER + KYC
    ========================================================= */
 $plain_password = $password;
 
@@ -269,35 +259,7 @@ try {
 
     $user_id = (int)$pdo->lastInsertId();
 
-    /* wallet bonus */
-    $stmt = $pdo->prepare("
-        UPDATE users
-        SET wallet_balance = wallet_balance + ?
-        WHERE id = ?
-        LIMIT 1
-    ");
-    $stmt->execute([$bonusAmount, $user_id]);
-
-    /* wallet transaction */
-    $stmt = $pdo->prepare("
-        INSERT INTO wallet_transactions (
-            user_id,
-            amount,
-            type,
-            source,
-            reference_id,
-            description,
-            created_at
-        ) VALUES (?, ?, 'credit', ?, 0, ?, NOW())
-    ");
-    $stmt->execute([
-        $user_id,
-        $bonusAmount,
-        $walletSource,
-        $walletDescription
-    ]);
-
-    /* notification */
+    /* registration completed notification only */
     $stmt = $pdo->prepare("
         INSERT INTO notifications (
             user_id,
@@ -309,10 +271,8 @@ try {
     ");
     $stmt->execute([
         $user_id,
-        $referrerUserId ? 'Referral Bonus Added' : 'Signup Bonus Added',
-        $referrerUserId
-            ? 'রেফারেল কোড ব্যবহার করে রেজিস্ট্রেশন করার জন্য আপনার wallet-এ ৳150.00 যোগ করা হয়েছে।'
-            : 'রেজিস্ট্রেশন বোনাস হিসেবে আপনার wallet-এ ৳100.00 যোগ করা হয়েছে।'
+        'Registration Completed',
+        'আপনার রেজিস্ট্রেশন এবং KYC submission সম্পন্ন হয়েছে। Admin approval-এর পরে signup/referral bonus যোগ হবে।'
     ]);
 
     /* =====================================================

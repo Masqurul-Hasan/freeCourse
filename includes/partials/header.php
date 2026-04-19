@@ -41,6 +41,7 @@ if (!empty($_SESSION['user_id'])) {
                     <a href="<?= SITE_URL; ?>/wallet.php">ওয়ালেট</a>
                     <a href="<?= SITE_URL; ?>/withdraw.php">উইথড্র</a>
                     <a href="<?= SITE_URL; ?>/withdraw-history.php">হিস্টোরি</a>
+                    <a href="<?= SITE_URL; ?>/profile.php">প্রোফাইল</a>
 
                     <a href="<?= SITE_URL; ?>/notifications.php" class="notification-nav">
                         নোটিফিকেশন

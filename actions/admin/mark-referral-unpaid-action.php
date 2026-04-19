@@ -41,16 +41,16 @@ try {
         redirect(SITE_URL . '/admin/referral-payouts.php');
     }
 
-    if ($payout['status'] === 'paid') {
+    if ($payout['status'] === 'pending') {
         $pdo->rollBack();
-        setFlash('error', 'This payout is already marked as paid.');
+        setFlash('error', 'This payout is already pending.');
         redirect(SITE_URL . '/admin/referral-payouts.php');
     }
 
     $stmt = $pdo->prepare("
         UPDATE referral_payouts
-        SET status = 'paid',
-            paid_at = NOW()
+        SET status = 'pending',
+            paid_at = NULL
         WHERE id = ?
         LIMIT 1
     ");
@@ -70,8 +70,8 @@ try {
     ");
     $stmt->execute([
         $referrerUserId,
-        'Referral Payout Paid',
-        'আপনার referral bKash payout ৳' . number_format($amount, 2) . ' paid করা হয়েছে।'
+        'Referral Payout Updated',
+        'আপনার referral payout ৳' . number_format($amount, 2) . ' আবার pending করা হয়েছে।'
     ]);
 
     $adminId = (int)($_SESSION['admin_id'] ?? 0);
@@ -86,14 +86,14 @@ try {
         ");
         $logStmt->execute([
             $adminId,
-            'referral_payout_paid',
+            'referral_payout_unpaid',
             $payoutId
         ]);
     }
 
     $pdo->commit();
 
-    setFlash('success', 'Referral payout marked as paid successfully.');
+    setFlash('success', 'Referral payout marked as unpaid successfully.');
     redirect(SITE_URL . '/admin/referral-payouts.php');
 
 } catch (Throwable $e) {
@@ -101,6 +101,6 @@ try {
         $pdo->rollBack();
     }
 
-    setFlash('error', 'Referral payout error: ' . $e->getMessage());
+    setFlash('error', 'Referral unpaid error: ' . $e->getMessage());
     redirect(SITE_URL . '/admin/referral-payouts.php');
 }

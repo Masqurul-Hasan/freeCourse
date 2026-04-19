@@ -45,22 +45,11 @@ try {
     ");
     $stmt->execute([$user_id]);
 
+    /* =========================================
+       GET USER INFO
+       ========================================= */
     $stmt = $pdo->prepare("
-        INSERT INTO notifications (user_id, title, message, is_read, created_at)
-        VALUES (?, ?, ?, 0, NOW())
-    ");
-    $stmt->execute([
-        $user_id,
-        'KYC অনুমোদিত হয়েছে',
-        'অভিনন্দন! আপনার অ্যাকাউন্ট অনুমোদিত হয়েছে। এখন আপনি ড্যাশবোর্ড ব্যবহার করতে পারবেন।'
-    ]);
-
-    /* =====================================================
-       REFERRAL PAYOUT CREATION
-       referred_by stores referral code string
-       ===================================================== */
-    $stmt = $pdo->prepare("
-        SELECT referred_by
+        SELECT id, referred_by
         FROM users
         WHERE id = ?
         LIMIT 1
@@ -68,6 +57,82 @@ try {
     $stmt->execute([$user_id]);
     $currentUser = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    if (!$currentUser) {
+        throw new Exception('User not found.');
+    }
+
+    /* =========================================
+       GIVE BONUS AFTER KYC APPROVE (Option B)
+       - no referral => 100
+       - with referral => 150
+       prevent duplicate bonus
+       ========================================= */
+    $bonusAmount = !empty($currentUser['referred_by']) ? 150 : 100;
+    $walletSource = !empty($currentUser['referred_by']) ? 'referral_bonus' : 'signup_bonus';
+    $walletDescription = !empty($currentUser['referred_by'])
+        ? 'Referral signup bonus after KYC approval'
+        : 'Signup bonus after KYC approval';
+
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM wallet_transactions
+        WHERE user_id = ?
+          AND source IN ('signup_bonus', 'referral_bonus')
+        LIMIT 1
+    ");
+    $stmt->execute([$user_id]);
+    $alreadyBonusGiven = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$alreadyBonusGiven) {
+        $stmt = $pdo->prepare("
+            UPDATE users
+            SET wallet_balance = wallet_balance + ?
+            WHERE id = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$bonusAmount, $user_id]);
+
+        $stmt = $pdo->prepare("
+            INSERT INTO wallet_transactions (
+                user_id,
+                amount,
+                type,
+                source,
+                reference_id,
+                description,
+                created_at
+            ) VALUES (?, ?, 'credit', ?, 0, ?, NOW())
+        ");
+        $stmt->execute([
+            $user_id,
+            $bonusAmount,
+            $walletSource,
+            $walletDescription
+        ]);
+    }
+
+    /* user notification */
+    $stmt = $pdo->prepare("
+        INSERT INTO notifications (
+            user_id,
+            title,
+            message,
+            is_read,
+            created_at
+        ) VALUES (?, ?, ?, 0, NOW())
+    ");
+    $stmt->execute([
+        $user_id,
+        'KYC অনুমোদিত হয়েছে',
+        !empty($currentUser['referred_by'])
+            ? 'অভিনন্দন! আপনার KYC approved হয়েছে এবং আপনার wallet-এ ৳150.00 referral signup bonus যোগ করা হয়েছে।'
+            : 'অভিনন্দন! আপনার KYC approved হয়েছে এবং আপনার wallet-এ ৳100.00 signup bonus যোগ করা হয়েছে।'
+    ]);
+
+    /* =========================================
+       REFERRAL PAYOUT CREATION
+       referred_by stores referral code string
+       ========================================= */
     if (!empty($currentUser['referred_by'])) {
         $referredByCode = trim((string)$currentUser['referred_by']);
 
@@ -94,8 +159,13 @@ try {
             ]);
 
             $stmt = $pdo->prepare("
-                INSERT INTO notifications (user_id, title, message, is_read, created_at)
-                VALUES (?, ?, ?, 0, NOW())
+                INSERT INTO notifications (
+                    user_id,
+                    title,
+                    message,
+                    is_read,
+                    created_at
+                ) VALUES (?, ?, ?, 0, NOW())
             ");
             $stmt->execute([
                 $referrerId,
@@ -110,11 +180,11 @@ try {
     setFlash('success', 'KYC সফলভাবে অনুমোদন করা হয়েছে।');
     redirect(SITE_URL . '/admin/pending-kyc.php');
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
 
-    setFlash('error', 'KYC approve করা যায়নি।');
+    setFlash('error', 'KYC approve error: ' . $e->getMessage());
     redirect(SITE_URL . '/admin/kyc-details.php?user_id=' . $user_id);
 }

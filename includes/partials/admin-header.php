@@ -22,6 +22,7 @@
                 <a href="<?= SITE_URL; ?>/admin/wallet-transactions.php">Wallet Ledger</a>
                 <a href="<?= SITE_URL; ?>/admin/create-user.php">Create User</a>
                 <a href="<?= SITE_URL; ?>/admin/pending-kyc.php">Pending KYC</a>
+                <a href="<?= SITE_URL; ?>/admin/referral-payouts.php">Referral Payouts</a>
                 <a href="<?= SITE_URL; ?>/admin/logout.php" class="nav-btn nav-btn-outline">লগআউট</a>
             </nav>
 
