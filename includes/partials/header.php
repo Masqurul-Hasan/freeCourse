@@ -32,8 +32,7 @@ if (!empty($_SESSION['user_id'])) {
 
             <nav class="main-nav" id="mainNav">
                 <a href="<?= SITE_URL; ?>/index.php">হোম</a>
-                <a href="<?= SITE_URL; ?>/about.php">আমাদের সম্পর্কে</a>
-                <a href="<?= SITE_URL; ?>/contact.php">যোগাযোগ</a>
+
 
                 <?php if (!empty($_SESSION['user_id'])): ?>
                     <a href="<?= SITE_URL; ?>/dashboard.php">ড্যাশবোর্ড</a>
