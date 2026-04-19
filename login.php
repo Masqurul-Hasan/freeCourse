@@ -17,7 +17,7 @@ include __DIR__ . '/includes/partials/header.php';
         <div class="card auth-card">
             <div class="auth-head">
                 <h1>অ্যাকাউন্টে লগইন করুন</h1>
-                <p>আপনার মোবাইল নাম্বার ও পাসওয়ার্ড দিন</p>
+                <p>আপনার মোবাইল নাম্বার বা ই-মেইল এবং পাসওয়ার্ড দিন</p>
             </div>
 
             <?php if ($msg = getFlash('error')): ?>
@@ -32,13 +32,25 @@ include __DIR__ . '/includes/partials/header.php';
                 <input type="hidden" name="csrf_token" value="<?= csrf_token(); ?>">
 
                 <div class="form-group">
-                    <label for="phone">মোবাইল নাম্বার</label>
-                    <input type="text" id="phone" name="phone" required>
+                    <label for="login_id">মোবাইল নাম্বার / ই-মেইল</label>
+                    <input
+                        type="text"
+                        id="login_id"
+                        name="login_id"
+                        placeholder="মোবাইল নাম্বার বা ই-মেইল লিখুন"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
                     <label for="password">পাসওয়ার্ড</label>
-                    <input type="password" id="password" name="password" required>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="আপনার পাসওয়ার্ড লিখুন"
+                        required
+                    >
                 </div>
 
                 <button type="submit" class="btn-primary auth-submit">লগইন করুন</button>

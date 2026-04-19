@@ -23,29 +23,34 @@ if (!verify_csrf($_POST['csrf_token'] ?? '')) {
 /* =========================================================
    3. GET INPUT
    ========================================================= */
-$phone = trim($_POST['phone'] ?? '');
+$login_id = trim($_POST['login_id'] ?? '');
 $password = $_POST['password'] ?? '';
 
 /* =========================================================
    4. BASIC VALIDATION
    ========================================================= */
-if ($phone === '' || $password === '') {
-    setFlash('error', 'মোবাইল নাম্বার ও পাসওয়ার্ড দিন।');
+if ($login_id === '' || $password === '') {
+    setFlash('error', 'মোবাইল নাম্বার/ইমেইল এবং পাসওয়ার্ড দিন।');
     redirect(SITE_URL . '/login.php');
 }
 
 /* =========================================================
-   5. FIND USER
+   5. FIND USER BY PHONE OR EMAIL
    ========================================================= */
-$stmt = $pdo->prepare("SELECT * FROM users WHERE phone = ? LIMIT 1");
-$stmt->execute([$phone]);
+$stmt = $pdo->prepare("
+    SELECT *
+    FROM users
+    WHERE phone = ? OR email = ?
+    LIMIT 1
+");
+$stmt->execute([$login_id, $login_id]);
 $user = $stmt->fetch();
 
 /* =========================================================
    6. LOGIN CHECK
    ========================================================= */
 if (!$user || $password !== $user['password']) {
-    setFlash('error', 'মোবাইল নাম্বার বা পাসওয়ার্ড সঠিক নয়।');
+    setFlash('error', 'মোবাইল নাম্বার/ইমেইল বা পাসওয়ার্ড সঠিক নয়।');
     redirect(SITE_URL . '/login.php');
 }
 

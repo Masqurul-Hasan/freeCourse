@@ -22,8 +22,7 @@ if (!empty($_SESSION['user_id'])) {
                 <img
                     src="<?= SITE_LOGO; ?>"
                     alt="<?= e(SITE_NAME); ?>"
-                    class="brand-logo"
-                >
+                    class="brand-logo">
             </a>
 
             <button class="menu-toggle" type="button" aria-label="মেনু খুলুন" id="menuToggle">
@@ -31,8 +30,10 @@ if (!empty($_SESSION['user_id'])) {
             </button>
 
             <nav class="main-nav" id="mainNav">
-                <a href="<?= SITE_URL; ?>/index.php">হোম</a>
 
+                
+                <a href="<?= SITE_URL; ?>/withdraw-history-demo.php">উত্তোলন বিবরণী</a>
+                <a href="<?= SITE_URL; ?>/index.php">হোম</a>
 
                 <?php if (!empty($_SESSION['user_id'])): ?>
                     <a href="<?= SITE_URL; ?>/dashboard.php">ড্যাশবোর্ড</a>
@@ -52,10 +53,14 @@ if (!empty($_SESSION['user_id'])) {
                     </a>
 
                     <a href="<?= SITE_URL; ?>/logout.php" class="nav-btn nav-btn-outline">লগআউট</a>
+
                 <?php else: ?>
+
                     <a href="<?= SITE_URL; ?>/login.php" class="nav-btn nav-btn-outline">লগইন</a>
                     <a href="<?= SITE_URL; ?>/register.php" class="nav-btn nav-btn-primary">রেজিস্টার</a>
+
                 <?php endif; ?>
+
             </nav>
 
         </div>
@@ -63,14 +68,14 @@ if (!empty($_SESSION['user_id'])) {
 </header>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const toggle = document.getElementById('menuToggle');
-    const nav = document.getElementById('mainNav');
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('menuToggle');
+        const nav = document.getElementById('mainNav');
 
-    if (toggle && nav) {
-        toggle.addEventListener('click', function () {
-            nav.classList.toggle('is-open');
-        });
-    }
-});
+        if (toggle && nav) {
+            toggle.addEventListener('click', function() {
+                nav.classList.toggle('is-open');
+            });
+        }
+    });
 </script>

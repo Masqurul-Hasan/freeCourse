@@ -7,6 +7,19 @@ require_once __DIR__ . '/includes/functions.php';
 $page_title = 'হোম';
 $meta_description = 'BD Workers - বাংলা মাইক্রো ওয়ার্ক earning platform';
 
+$recentJobs = [
+    ['code' => 'VLX004X', 'done' => 12, 'total' => 320, 'reward' => '12.00', 'time' => '6 minutes ago'],
+    ['code' => 'BLQ771X', 'done' => 58, 'total' => 640, 'reward' => '18.00', 'time' => '14 minutes ago'],
+    ['code' => 'TUX119X', 'done' => 34, 'total' => 210, 'reward' => '15.00', 'time' => '18 minutes ago'],
+    ['code' => 'BTM880X', 'done' => 92, 'total' => 520, 'reward' => '20.00', 'time' => '25 minutes ago'],
+    ['code' => 'IMT004X', 'done' => 44, 'total' => 300, 'reward' => '22.00', 'time' => '32 minutes ago'],
+    ['code' => 'LWS553X', 'done' => 11, 'total' => 150, 'reward' => '10.00', 'time' => '40 minutes ago'],
+    ['code' => 'KRD291X', 'done' => 73, 'total' => 410, 'reward' => '24.00', 'time' => '1 hour ago'],
+    ['code' => 'PXN663X', 'done' => 28, 'total' => 200, 'reward' => '16.00', 'time' => '1 hour ago'],
+    ['code' => 'DMT005X', 'done' => 66, 'total' => 380, 'reward' => '27.00', 'time' => '2 hours ago'],
+    ['code' => 'ZRX221X', 'done' => 19, 'total' => 260, 'reward' => '30.00', 'time' => '2 hours ago'],
+];
+
 include __DIR__ . '/includes/partials/head.php';
 include __DIR__ . '/includes/partials/header.php';
 ?>
@@ -198,42 +211,158 @@ include __DIR__ . '/includes/partials/header.php';
     line-height: 1.8;
 }
 
-.home-steps{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+.recent-activity-section{
+    padding: 4px 0 28px;
 }
 
-.home-step{
-    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-    border: 1px solid #e7edf5;
-    border-radius: 20px;
-    padding: 22px;
+.recent-activity-wrap{
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    border-radius: 28px;
+    padding: 30px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    margin-bottom: 22px;
 }
 
-.home-step-number{
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #2563eb;
+.recent-activity-head{
     color: #fff;
+    margin-bottom: 20px;
+}
+
+.recent-job-reward::after{
+    content: " ৳";
+    font-weight: 600;
+    margin-left: 3px;
+}
+
+.recent-activity-eyebrow{
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    color: #d8ecff;
+}
+
+.recent-activity-head h2{
+    margin: 0 0 8px;
+    font-size: clamp(30px, 3vw, 48px);
+    line-height: 1.02;
     font-weight: 900;
+    color: #fff;
+}
+
+.recent-activity-head p{
+    margin: 0;
+    color: rgba(255,255,255,.82);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.recent-activity-box{
+    background: #edf9ef;
+    border: 1px solid #d5eedb;
+    border-radius: 24px;
+    padding: 16px;
+}
+
+.recent-job-row{
+    background: #fff;
+    border: 1px solid #dceee0;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+}
+
+.recent-job-row:last-child{
+    margin-bottom: 0;
+}
+
+.recent-job-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 14px;
 }
 
-.home-step h3{
-    margin: 0 0 10px;
-    color: #0f172a;
-    font-weight: 900;
+.recent-view-btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 0 12px;
+    background: #47c96f;
+    color: #fff;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
 }
 
-.home-step p{
-    margin: 0;
-    color: #5b6b85;
-    line-height: 1.8;
+.recent-view-btn:hover{
+    color: #fff;
+    opacity: .92;
+}
+
+.recent-job-time{
+    font-size: 13px;
+    color: #2f6dfc;
+    font-weight: 600;
+}
+
+.recent-job-main{
+    display: grid;
+    grid-template-columns: 180px 1fr 110px;
+    align-items: center;
+    gap: 18px;
+}
+
+.recent-job-code{
+    font-size: 14px;
+    font-weight: 700;
+    color: #7b8595;
+    letter-spacing: .04em;
+}
+
+.recent-job-progress-wrap{
+    width: 100%;
+}
+
+.recent-job-progress-text{
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #2f6dfc;
+    margin-bottom: 8px;
+}
+
+.recent-job-progress{
+    width: 100%;
+    height: 4px;
+    background: #dfe5ec;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.recent-job-progress-bar{
+    height: 100%;
+    background: #2f6dfc;
+    border-radius: 999px;
+}
+
+.recent-job-reward{
+    text-align: right;
+    font-size: 28px;
+    font-weight: 500;
+    color: #23955b;
+}
+
+.recent-activity-note{
+    color: rgba(255,255,255,.84);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-top: 14px;
+    text-align: center;
 }
 
 .home-cta{
@@ -278,9 +407,24 @@ include __DIR__ . '/includes/partials/header.php';
 
 @media (max-width: 1024px){
     .home-hero-grid,
-    .home-grid,
-    .home-steps{
+    .home-grid{
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px){
+    .recent-job-main{
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .recent-job-code{
+        text-align: left;
+    }
+
+    .recent-job-reward{
+        text-align: left;
+        font-size: 24px;
     }
 }
 
@@ -291,9 +435,25 @@ include __DIR__ . '/includes/partials/header.php';
 
     .home-hero,
     .home-section,
-    .home-cta{
+    .home-cta,
+    .recent-activity-wrap{
         border-radius: 20px;
         padding: 20px;
+    }
+
+    .recent-activity-box{
+        border-radius: 18px;
+        padding: 10px;
+    }
+
+    .recent-job-row{
+        padding: 12px;
+    }
+
+    .recent-job-top{
+        gap: 12px;
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     .home-actions,
@@ -384,29 +544,48 @@ include __DIR__ . '/includes/partials/header.php';
             </div>
         </section>
 
-        <section class="home-section">
-            <div class="home-section-head">
-                <h2>কীভাবে কাজ করে</h2>
-                <p>শুরু থেকে earning পর্যন্ত পুরো process খুব সহজ রাখা হয়েছে।</p>
-            </div>
-
-            <div class="home-steps">
-                <div class="home-step">
-                    <div class="home-step-number">1</div>
-                    <h3>রেজিস্টার করুন</h3>
-                    <p>একটি account খুলুন এবং profile setup করুন।</p>
+        <section class="recent-activity-section">
+            <div class="recent-activity-wrap">
+                <div class="recent-activity-head">
+                    <span class="recent-activity-eyebrow">BD WORKERS</span>
+                    <h2>Recently Posted Jobs</h2>
+                    <p>সাম্প্রতিক sample work preview দেখুন</p>
                 </div>
 
-                <div class="home-step">
-                    <div class="home-step-number">2</div>
-                    <h3>Task complete করুন</h3>
-                    <p>ভিডিও দেখা, ad click করা বা ছোট task complete করে proof submit করুন।</p>
+                <div class="recent-activity-box">
+                    <?php foreach ($recentJobs as $job): ?>
+                        <?php
+                            $percent = 0;
+                            if ((int)$job['total'] > 0) {
+                                $percent = min(100, max(0, ($job['done'] / $job['total']) * 100));
+                            }
+                        ?>
+                        <div class="recent-job-row">
+                            <div class="recent-job-top">
+                                <a href="<?= SITE_URL; ?>/login.php" class="recent-view-btn">View</a>
+                                <span class="recent-job-time"><?= e($job['time']); ?></span>
+                            </div>
+
+                            <div class="recent-job-main">
+                                <div class="recent-job-code"><?= e($job['code']); ?></div>
+
+                                <div class="recent-job-progress-wrap">
+                                    <div class="recent-job-progress-text">
+                                        <?= (int)$job['done']; ?> OF <?= (int)$job['total']; ?>
+                                    </div>
+                                    <div class="recent-job-progress">
+                                        <div class="recent-job-progress-bar" style="width: <?= number_format($percent, 2); ?>%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="recent-job-reward"><?= e($job['reward']); ?></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
 
-                <div class="home-step">
-                    <div class="home-step-number">3</div>
-                    <h3>Earning তুলুন</h3>
-                    <p>Approved reward wallet-এ যোগ হবে, পরে withdraw request করতে পারবেন।</p>
+                <div class="recent-activity-note">
+                    সম্পূর্ণ work details দেখতে login / register করুন।
                 </div>
             </div>
         </section>
