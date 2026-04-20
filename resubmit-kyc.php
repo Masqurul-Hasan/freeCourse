@@ -9,6 +9,29 @@ if (empty($_SESSION['user_id'])) {
     redirect(SITE_URL . '/login.php');
 }
 
+/* =========================================================
+   REFRESH USER STATUS
+   ========================================================= */
+$stmt = $pdo->prepare("
+    SELECT id, kyc_status
+    FROM users
+    WHERE id = ?
+    LIMIT 1
+");
+$stmt->execute([$_SESSION['user_id']]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$user) {
+    session_unset();
+    session_destroy();
+    redirect(SITE_URL . '/login.php');
+}
+
+$_SESSION['kyc_status'] = $user['kyc_status'];
+
+/* =========================================================
+   GET LATEST KYC
+   ========================================================= */
 $stmt = $pdo->prepare("
     SELECT *
     FROM kyc_submissions
@@ -17,13 +40,24 @@ $stmt = $pdo->prepare("
     LIMIT 1
 ");
 $stmt->execute([$_SESSION['user_id']]);
-$kyc = $stmt->fetch();
+$kyc = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$kyc) {
     setFlash('error', 'KYC তথ্য পাওয়া যায়নি।');
     redirect(SITE_URL . '/dashboard.php');
 }
 
+/* =========================================================
+   PERMANENTLY REJECTED BLOCK
+   ========================================================= */
+if ($_SESSION['kyc_status'] === 'permanently_rejected') {
+    setFlash('error', 'দুঃখিত, আপনার KYC একাধিকবার সঠিকভাবে যাচাই করা সম্ভব হয়নি। অনুগ্রহ করে সাপোর্টের সাথে যোগাযোগ করুন।');
+    redirect(SITE_URL . '/dashboard.php');
+}
+
+/* =========================================================
+   ONLY RESUBMIT_REQUIRED USERS CAN ACCESS
+   ========================================================= */
 if ($kyc['status'] !== 'resubmit_required' && $_SESSION['kyc_status'] !== 'resubmit_required') {
     redirect(SITE_URL . '/dashboard.php');
 }

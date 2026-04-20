@@ -109,8 +109,9 @@ $stmt = $pdo->prepare("
         nid_front_image,
         nid_back_image,
         status,
+        attempt_no,
         submitted_at
-    ) VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())
+    ) VALUES (?, ?, ?, ?, ?, ?, 'pending', 1, NOW())
 ");
 
 $stmt->execute([
