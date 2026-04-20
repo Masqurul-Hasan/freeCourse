@@ -91,35 +91,45 @@ include __DIR__ . '/../includes/partials/admin-header.php';
         </div>
 
         <div class="admin-stats-grid">
-            <div class="admin-stat-card card">
-                <div class="admin-stat-label">মোট ইউজার</div>
-                <div class="admin-stat-value"><?= $totalUsers; ?></div>
-                <div class="admin-stat-note">সিস্টেমে মোট নিবন্ধিত ইউজার</div>
-            </div>
+            <a href="<?= SITE_URL; ?>/admin/users.php" class="admin-stat-link">
+                <div class="admin-stat-card card">
+                    <div class="admin-stat-label">মোট ইউজার</div>
+                    <div class="admin-stat-value"><?= $totalUsers; ?></div>
+                    <div class="admin-stat-note">সিস্টেমে মোট নিবন্ধিত ইউজার</div>
+                </div>
+            </a>
 
-            <div class="admin-stat-card card">
-                <div class="admin-stat-label">Pending KYC</div>
-                <div class="admin-stat-value"><?= $pendingKyc; ?></div>
-                <div class="admin-stat-note">এখনো review বাকি</div>
-            </div>
+            <a href="<?= SITE_URL; ?>/admin/pending-kyc.php" class="admin-stat-link">
+                <div class="admin-stat-card card">
+                    <div class="admin-stat-label">Pending KYC</div>
+                    <div class="admin-stat-value"><?= $pendingKyc; ?></div>
+                    <div class="admin-stat-note">এখনো review বাকি</div>
+                </div>
+            </a>
 
-            <div class="admin-stat-card card">
-                <div class="admin-stat-label">Approved KYC</div>
-                <div class="admin-stat-value"><?= $approvedKyc; ?></div>
-                <div class="admin-stat-note">অনুমোদিত ইউজার</div>
-            </div>
+            <a href="<?= SITE_URL; ?>/admin/approved-kyc.php" class="admin-stat-link">
+                <div class="admin-stat-card card">
+                    <div class="admin-stat-label">Approved KYC</div>
+                    <div class="admin-stat-value"><?= $approvedKyc; ?></div>
+                    <div class="admin-stat-note">অনুমোদিত ইউজার</div>
+                </div>
+            </a>
 
-            <div class="admin-stat-card card">
-                <div class="admin-stat-label">Rejected KYC</div>
-                <div class="admin-stat-value"><?= $rejectedKyc; ?></div>
-                <div class="admin-stat-note">বাতিল করা KYC</div>
-            </div>
+            <a href="<?= SITE_URL; ?>/admin/rejected-kyc.php" class="admin-stat-link">
+                <div class="admin-stat-card card">
+                    <div class="admin-stat-label">Rejected KYC</div>
+                    <div class="admin-stat-value"><?= $rejectedKyc; ?></div>
+                    <div class="admin-stat-note">বাতিল করা KYC</div>
+                </div>
+            </a>
 
-            <div class="admin-stat-card card">
-                <div class="admin-stat-label">Resubmit Required</div>
-                <div class="admin-stat-value"><?= $resubmitKyc; ?></div>
-                <div class="admin-stat-note">পুনরায় জমা দিতে হবে</div>
-            </div>
+            <a href="<?= SITE_URL; ?>/admin/resubmit-kyc.php" class="admin-stat-link">
+                <div class="admin-stat-card card">
+                    <div class="admin-stat-label">Resubmit Required</div>
+                    <div class="admin-stat-value"><?= $resubmitKyc; ?></div>
+                    <div class="admin-stat-note">পুনরায় জমা দিতে হবে</div>
+                </div>
+            </a>
         </div>
 
         <div class="admin-stats-grid" style="margin-top: 18px;">
@@ -257,53 +267,6 @@ include __DIR__ . '/../includes/partials/admin-header.php';
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="card admin-panel-card" style="margin-top: 24px;">
-            <div class="section-head">
-                <h2>Recent Admin Activity</h2>
-                <p>সাম্প্রতিক admin action history</p>
-            </div>
-
-            <?php if (empty($recentLogs)): ?>
-                <div class="empty-state">এখনো কোনো admin activity পাওয়া যায়নি।</div>
-            <?php else: ?>
-                <div class="table-wrap">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Admin</th>
-                                <th>Action</th>
-                                <th>Target ID</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($recentLogs as $index => $log): ?>
-                                <tr>
-                                    <td><?= $index + 1; ?></td>
-                                    <td>
-                                        <strong><?= e($log['admin_name'] ?: 'Unknown Admin'); ?></strong><br>
-                                        <small><?= e($log['admin_email'] ?: 'N/A'); ?></small>
-                                    </td>
-                                    <td>
-                                        <span class="status-badge status-approved">
-                                            <?= e(admin_action_label($log['action'])); ?>
-                                        </span>
-                                    </td>
-                                    <td><?= e((string)$log['target_id']); ?></td>
-                                    <td><?= e($log['created_at']); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="form-actions" style="margin-top: 18px;">
-                    <a href="<?= SITE_URL; ?>/admin/activity-logs.php" class="btn-light">সব Activity Logs দেখুন</a>
-                </div>
-            <?php endif; ?>
         </div>
     </div>
 </main>
